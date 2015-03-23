@@ -1,5 +1,7 @@
 module Favicon
 
+  # Accesses the favicon, whether through cache or fetching it
+  #
   class Accessor
 
     def initialize(url, options = {})

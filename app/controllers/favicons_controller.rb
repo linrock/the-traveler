@@ -1,5 +1,7 @@
 class FaviconsController < ApplicationController
 
+  # Homepage - shows a list of recent favicons
+  #
   def index
     favicon_urls = Favicon::Cache.get_cached_favicon_urls
     unless favicon_urls.present?

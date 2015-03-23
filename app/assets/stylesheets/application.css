@@ -28,3 +28,7 @@ body {
   margin: 50px 0;
   font-size: 30px;
 }
+
+input[type="text"] {
+  padding: 6px 8px;
+}

@@ -1,5 +1,7 @@
 module Favicon
 
+  # Actually go and grab the favicon from the given url
+  #
   class Fetcher
 
     # Given a url, grab the favicon
@@ -20,7 +22,7 @@ module Favicon
     end
 
     def fetch
-      @html = `curl -sL -3 -m #{TIMEOUT} #{@url}`
+      @html = `curl -sL -1 -m #{TIMEOUT} #{@url}`
       get_final_url
       get_candidate_favicon_urls
       get_favicon
@@ -53,7 +55,7 @@ module Favicon
     # Follow redirects from the given url to get to the actual url
     #
     def get_final_url
-      output = `curl -sIL -3 -m #{TIMEOUT} #{@url}`
+      output = `curl -sIL -1 -m #{TIMEOUT} #{@url}`
       final = output.scan(/Location: (.*)/)[-1]
       @final_url = final && final[0].strip
       return @final_url if @final_url.present?
