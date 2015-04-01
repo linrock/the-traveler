@@ -7,18 +7,18 @@ module Favicon
 
     def initialize(url)
       @store = Rails.cache
-      @key = url
+      @key = "favicon:#{url}"
     end
 
     # Get the cached favicon image data
     #
     def get
-      Rails.cache.read @key
+      @store.read @key
     end
 
     def set(image_data, options = {})
-      opts = { :expires_in => 1.day }.merge(options)
-      Rails.cache.write @key, image_data, **opts
+      opts = { :expires_in => 1.month }.merge(options)
+      @store.write @key, image_data, **opts
       mru_set
       image_data
     end
@@ -26,10 +26,10 @@ module Favicon
     # When fetching a new favicon, add it to the list
     #
     def mru_set
-      favicons = Rails.cache.read("favicon_cache:mru")
+      favicons = @store.read("favicon_cache:mru")
       favicons ||= []
-      favicons.push @key
-      Rails.cache.write("favicon_cache:mru", favicons)
+      favicons.push @key.split("favicon:").last
+      @store.write("favicon_cache:mru", favicons)
       favicons
     end
 

@@ -48,7 +48,7 @@ module Favicon
 
     def base64_png
       # @img_url = "data:image/png;base64,#{encoded}"
-      Base64.encode64(to_png).split(/\s+/).join("")
+      Base64.encode64(to_png).split(/\s+/).join
     end
 
   end
