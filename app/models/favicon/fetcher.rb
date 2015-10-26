@@ -24,7 +24,7 @@ module Favicon
     end
 
     def fetch
-      @html = `curl -sL -1 -m #{TIMEOUT} #{@url}`
+      @html = `curl -sL --compressed -1 -m #{TIMEOUT} #{@url}`
       get_final_url
       get_candidate_favicon_urls
       get_favicon
