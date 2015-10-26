@@ -7,10 +7,12 @@ module Favicon
     # Given a url, grab the favicon
     #
     TIMEOUT = 5
-    ICON_SELECTORS = %w( link[rel="shortcut icon"]
-                         link[rel="icon"]
-                         link[rel="fluid-icon"]
-                         link[rel="apple-touch-icon"] )
+    ICON_SELECTORS = [ 'link[rel="shortcut icon"]',
+                       'link[rel="icon"]',
+                       'link[type="image/x-icon"]',
+                       'link[rel="fluid-icon"]',
+                       'link[rel="apple-touch-icon"]'
+                     ]
 
     attr_accessor :final_url
 
@@ -47,7 +49,6 @@ module Favicon
         href = URI.join(root, href).to_s if href !~ /^http/
         href
       end
-
       @candidates << URI.join(root, "favicon.ico").to_s
       @candidates << URI.join(root, "favicon.png").to_s
     end
