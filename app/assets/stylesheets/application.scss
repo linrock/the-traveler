@@ -15,20 +15,52 @@
  */
 
 
+$font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
+
+
+html {
+  box-sizing: border-box;
+}
+
+*, *:before, *:after {
+  box-sizing: inherit;
+}
+
 body {
-  font-family: "Helvetica Neue", Arial, sans-serif;
+  font-family: $font-family;
+}
+
+input[type="text"] {
+  font-family: $font-family;
+  font-size: 16px;
+  padding: 3px 4px;
+  width: 184px;
 }
 
 .container {
-  width: 400px;
+  width: 184px;
   margin: 0 auto;
+}
+
+.favicon {
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
+  margin-bottom: 4px;
+
+  &:nth-child(8n) {
+    margin-right: 0;
+  }
+
 }
 
 .favicons-header {
   margin: 50px 0;
   font-size: 30px;
+  text-align: center;
 }
 
-input[type="text"] {
-  padding: 6px 8px;
+.favicons {
+  margin: 50px 0 200px;
 }
+

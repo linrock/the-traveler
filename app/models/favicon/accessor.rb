@@ -34,6 +34,7 @@ module Favicon
         cached_image = get_favicon_image_from_cache(@url)
         return cached_image if cached_image
       end
+      return if @options[:only_cache]
       get_favicon_image_from_url(@url)
     end
 

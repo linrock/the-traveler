@@ -5,7 +5,7 @@
   </header>
 
   <form action="/favicons" method="GET">
-    <input type="text" name="q">
+    <input type="text" name="q" placeholder="Enter url">
   </form>
 
   <br>
@@ -13,7 +13,7 @@
   <div class="favicons">
 
     <% @favicon_urls.each do |img_url| %>
-      <img src="<%= img_url %>">
+      <img class="favicon" src="<%= img_url %>">
     <% end %>
 
   </div>
