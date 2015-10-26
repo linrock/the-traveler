@@ -9,23 +9,32 @@ module Favicon
       @options = options
     end
 
-    # Chooses cache or fetching favicon directly
-    #
-    def get_favicon
-      cache = Favicon::Cache.new(@url)
+    def get_favicon_image_from_cache(url)
+      favicon_cache(url).get
+    end
 
-      unless @options[:skip_cache]
-        cached_image = cache.get
-        return cached_image if cached_image
-      end
-
-      fetcher = Favicon::Fetcher.new(@url)
+    def get_favicon_image_from_url(url)
+      fetcher = Favicon::Fetcher.new(url)
       image = fetcher.fetch
       return unless image
 
       raw_image = image.to_png
-      cache.set raw_image
+      favicon_cache(url).set raw_image
       raw_image
+    end
+
+    def favicon_cache(url)
+      Favicon::Cache.new(url)
+    end
+
+    # Chooses cache or fetching favicon directly
+    #
+    def get_favicon_image
+      unless @options[:skip_cache]
+        cached_image = get_favicon_image_from_cache(@url)
+        return cached_image if cached_image
+      end
+      get_favicon_image_from_url(@url)
     end
 
   end

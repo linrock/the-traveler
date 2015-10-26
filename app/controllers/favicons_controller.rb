@@ -8,7 +8,7 @@ class FaviconsController < ApplicationController
     unless favicon_urls.present?
       favicon_urls = %w( yahoo.com quora.com google.com )
     end
-    favicon_urls = favicon_urls + hostnames
+    favicon_urls = (favicon_urls + hostnames).uniq
     @favicon_urls = favicon_urls.map {|url|
       "http://localhost:3000/favicons?q=#{url}"
     }
@@ -18,11 +18,12 @@ class FaviconsController < ApplicationController
   #
   def show
     url = params[:q]
-    raw_image = Favicon::Accessor.new(url).get_favicon
-
+    raw_image = Favicon::Accessor.new(url).get_favicon_image
     if !raw_image.nil? && raw_image.length > 0
       render :text => raw_image, :content_type => Mime::PNG
       return
+    else
+      render :nothing => true, :status => 404
     end
   end
 
