@@ -10,7 +10,7 @@ class FaviconsController < ApplicationController
     end
     favicon_urls = (favicon_urls + hostnames).uniq
     @favicon_urls = favicon_urls.map {|url|
-      "http://localhost:3000/favicons?q=#{url}"
+      "/favicons?q=#{url}"
     }
   end
 
