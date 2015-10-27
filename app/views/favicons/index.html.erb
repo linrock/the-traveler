@@ -34,10 +34,9 @@
 
     <% else %>
 
-        <% @favicon_urls.each do |img_url| %>
-          <img class="favicon" src="<%= img_url %>" title="<%= img_url %>">
-        <% end %>
-      </div>
+      <% @favicon_urls.each do |img_url| %>
+        <img class="favicon" src="<%= img_url %>" title="<%= img_url %>">
+      <% end %>
 
     <% end %>
 
