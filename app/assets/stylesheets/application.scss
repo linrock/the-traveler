@@ -27,19 +27,23 @@ html {
 }
 
 body {
+  background: #111;
   font-family: $font-family;
 }
 
 input[type="text"] {
+  border: 1px solid #dfdfdf;
   font-family: $font-family;
   font-size: 16px;
-  padding: 3px 4px;
+  padding: 4px 10px;
   width: 184px;
 }
 
 .container {
-  width: 184px;
-  margin: 0 auto;
+  background: white;
+  width: 184 + 32px;
+  padding: 16px;
+  margin: 30px auto 50px;
 }
 
 .favicon {
@@ -55,12 +59,12 @@ input[type="text"] {
 }
 
 .favicons-header {
-  margin: 50px 0;
+  margin: 30px 0;
   font-size: 30px;
   text-align: center;
 }
 
 .favicons {
-  margin: 50px 0 200px;
+  margin: 25px 0;
 }
 
