@@ -12,6 +12,13 @@ class FaviconsController < ApplicationController
     @favicon_urls = favicon_urls.map {|url|
       "/favicons?q=#{url}"
     }
+
+    @use_spritesheet = true
+
+    if @use_spritesheet
+      @spritesheet = Spritesheet.new
+      @spritesheet.generate
+    end
   end
 
   # http://localhost:3000/favicons?q=yahoo.com

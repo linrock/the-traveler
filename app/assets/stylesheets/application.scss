@@ -37,6 +37,7 @@ input[type="text"] {
   font-size: 16px;
   padding: 4px 10px;
   width: 184px;
+  -webkit-font-smoothing: antialiased;
 }
 
 .container {
@@ -47,10 +48,11 @@ input[type="text"] {
 }
 
 .favicon {
+  float: left;
   width: 16px;
   height: 16px;
-  margin-right: 4px;
-  margin-bottom: 4px;
+  margin-right: 8px;
+  margin-bottom: 8px;
 
   &:nth-child(8n) {
     margin-right: 0;
@@ -58,13 +60,18 @@ input[type="text"] {
 
 }
 
+.favicon-sprite {
+  background: url(/assets/favicons.png);
+}
+
 .favicons-header {
   margin: 30px 0;
   font-size: 30px;
   text-align: center;
+  -webkit-font-smoothing: antialiased;
 }
 
 .favicons {
   margin: 25px 0;
+  overflow: hidden;
 }
-

@@ -10,12 +10,18 @@
 
   <br>
 
-  <div class="favicons">
+  <% if @use_spritesheet %>
 
-    <% @favicon_urls.each do |img_url| %>
-      <img class="favicon" src="<%= img_url %>" title="<%= img_url %>">
-    <% end %>
+    <%= render :partial => "favicons/spritesheet" %>
 
-  </div>
+  <% else %>
+
+    <div class="favicons">
+      <% @favicon_urls.each do |img_url| %>
+        <img class="favicon" src="<%= img_url %>" title="<%= img_url %>">
+      <% end %>
+    </div>
+
+  <% end %>
 
 </div>
