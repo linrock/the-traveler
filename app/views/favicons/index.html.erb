@@ -12,16 +12,35 @@
 
   <% if @use_spritesheet %>
 
-    <%= render :partial => "favicons/spritesheet" %>
-
-  <% else %>
-
-    <div class="favicons">
-      <% @favicon_urls.each do |img_url| %>
-        <img class="favicon" src="<%= img_url %>" title="<%= img_url %>">
-      <% end %>
-    </div>
+    <style>
+      .favicon-sprite {
+        background: url(/assets/favicons.png?<%= @spritesheet.updated_at %>);
+      }
+    </style>
 
   <% end %>
+
+  <div class="favicons">
+
+    <% if @use_spritesheet %>
+
+      <% @spritesheet.rows.each do |row| %>
+
+        <div class="favicon favicon-sprite <%= row[:css_class] %>"
+             style="<%= row[:css_rule] %>"
+             title="<%= row[:url] %>"></div>
+
+      <% end %>
+
+    <% else %>
+
+        <% @favicon_urls.each do |img_url| %>
+          <img class="favicon" src="<%= img_url %>" title="<%= img_url %>">
+        <% end %>
+      </div>
+
+    <% end %>
+
+  </div>
 
 </div>

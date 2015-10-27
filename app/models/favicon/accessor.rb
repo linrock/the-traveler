@@ -6,6 +6,11 @@ module Favicon
 
     def initialize(url, options = {})
       @url = url
+      if @url =~ /https?:\/\//
+        @host = URI.parse(url).host
+      else
+        @host = url
+      end
       @options = options
     end
 
@@ -31,11 +36,11 @@ module Favicon
     #
     def get_favicon_image
       unless @options[:skip_cache]
-        cached_image = get_favicon_image_from_cache(@url)
+        cached_image = get_favicon_image_from_cache(@host)
         return cached_image if cached_image
       end
       return if @options[:only_cache]
-      get_favicon_image_from_url(@url)
+      get_favicon_image_from_url(@host)
     end
 
   end

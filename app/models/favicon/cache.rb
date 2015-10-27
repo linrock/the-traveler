@@ -31,7 +31,7 @@ module Favicon
       favicon_urls ||= []
       url = @key.split("favicon:").last
       return favicon_urls if Set.new(favicon_urls).include? url
-      favicon_urls.push url
+      favicon_urls.unshift url
       @store.write("favicon_cache:mru", favicon_urls)
       favicon_urls
     end

@@ -1,9 +1,8 @@
 class Spritesheet
 
-  attr_accessor :css, :image, :urls, :rows
+  attr_accessor :css, :image, :urls, :rows, :updated_at
 
   def initialize
-
   end
 
   def generate
@@ -32,6 +31,7 @@ class Spritesheet
     `convert #{image_filenames.join " "} -colorspace RGB +append png:#{merged_image}`
     @image = open(merged_image).read
     @css   = css_rules.join("\n")
+    @updated_at = Time.now.to_i
     `cp #{merged_image} #{Rails.root.join("app/assets/images/favicons.png")}`
   end
 
