@@ -24,11 +24,11 @@
 
     <% if @use_spritesheet %>
 
-      <% @spritesheet.rows.each do |row| %>
+      <% @spritesheet.sprites.each do |sprite| %>
 
-        <div class="favicon favicon-sprite <%= row[:css_class] %>"
-             style="<%= row[:css_rule] %>"
-             title="<%= row[:url] %>"></div>
+        <div class="favicon favicon-sprite <%= sprite[:css_class] %>"
+             style="<%= sprite[:css_rule] %>"
+             title="<%= sprite[:url] %>"></div>
 
       <% end %>
 
