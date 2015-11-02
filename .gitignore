@@ -17,3 +17,5 @@
 /tmp
 
 /app/assets/images/favicons.png
+
+node_modules

@@ -1,0 +1,9 @@
+{
+  "name": "favicon-fetcher",
+  "version": "0.1",
+  "dependencies": [
+    "request",
+    "jsdom",
+    "mmmagic"
+  ]
+}
