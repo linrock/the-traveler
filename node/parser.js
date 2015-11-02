@@ -2,6 +2,8 @@ var exports = module.exports = {};
 
 var jsdom = require('jsdom');
 var fs = require('fs');
+var u = require('url');
+
 var jquery = fs.readFileSync('./jquery-2.1.4.js', 'utf-8');
 
 
@@ -9,14 +11,15 @@ exports.getAbsoluteFaviconUrl = function(url, path) {
   if (path.startsWith('http')) {
     return path;
   } else if (!path.startsWith(url)) {
-    if (!path.startsWith("/")) {
-      return url + "/" + path;
-    } else {
+    if (path.startsWith('//')) {
+      return u.parse(url, true).protocol + path;
+    } else if (path.startsWith("/")) {
       return url + path;
+    } else {
+      return url + "/" + path;
     }
-  } else {
-    return path;
   }
+  return path;
 };
 
 
@@ -46,7 +49,7 @@ exports.getFaviconLinkFromHTML = function(html) {
         if (results.length > 0) {
           resolve(results.first().attr('href'));
         } else {
-          reject({ error: "No favicon links found" });
+          reject({ error: "No favicon links found in HTML" });
         }
       }
     });

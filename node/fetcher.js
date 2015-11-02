@@ -25,8 +25,13 @@ exports.fetchHTMLFromSource = function(query) {
 
   return new Promise(function(resolve, reject) {
 
-    request(query, function(error, response, body) {
-      console.log("Status " + response.statusCode);
+    request(query, { gzip: true, timeout: 8000 }, function(error, response, body) {
+      if (!response) {
+        console.log(query + " - No response!");
+        reject({ error: error });
+        return;
+      }
+      console.log(query + " - status " + response.statusCode);
       if (!error && response.statusCode == 200) {
         console.log("Fetched HTML for " + query);
         resolve(body);

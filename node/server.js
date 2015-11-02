@@ -9,6 +9,13 @@ var requestHandler = function(request, response) {
   var params = url.parse(request.url, true).query;
   var query = params.q;
 
+  if (!query) {
+    console.log("-- NO QUERY --");
+    response.writeHead(404);
+    response.end();
+    return;
+  }
+
   accessor.getFaviconFromSource(query)
 
     .then(function(favicon) {

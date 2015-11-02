@@ -42,7 +42,7 @@ exports.getFavicon = function(query) {
 
         .catch(function(error) {
           console.log('Nope from source! ' + error);
-          return 'Nope';
+          throw 'Nope';
         });
 
     });
