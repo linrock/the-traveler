@@ -3,6 +3,8 @@ var exports = module.exports = {};
 var request = require('request');
 var parser = require('./parser.js');
 
+var exec = require('child_process').exec;
+
 
 exports.test = function() {
 
@@ -45,11 +47,25 @@ exports.fetchFaviconDataFromUrl = function(faviconUrl) {
 
   return new Promise(function(resolve, reject) {
 
-    request(faviconUrl, function(error, response, body) {
-      if (!error && response.statusCode == 200) {
-        resolve(body);
+    // var requestOptions = {
+    //   url: faviconUrl,
+    //   encoding: null
+    // };
+
+    // request(requestOptions, function(error, response, body) {
+    //   if (!error && response.statusCode == 200) {
+    //     resolve(body);
+    //   } else {
+    //     reject({ error: error });
+    //   }
+    // });
+
+    var options = { encoding: 'binary', maxBuffer: 5000 * 1024 };
+    exec('curl -sL -m 5 ' + faviconUrl, options, function(error, stdout, stderr) {
+      if (error) {
+        reject(error);
       } else {
-        reject({ error: error });
+        resolve(new Buffer(stdout, 'binary'));
       }
     });
 

@@ -12,15 +12,35 @@ var requestHandler = function(request, response) {
   accessor.getFaviconFromSource(query)
 
     .then(function(favicon) {
-      // console.log("Favicon: " + favicon);
       processor.getMimeType(favicon).then(console.log);
-      processor.identify(favicon).then(console.log);
-      response.end('[200] Found favicon for: ' + query + '\n');
+      return processor.identify(favicon)
+        .then(function(identity) {
+          console.log(identity);
+          return favicon;
+        })
+        .catch(function(error) {
+          response.writeHead(404, { 'Content-Type' : 'text/plain' });
+          response.end('[404] Failed to identify favicon: ' + query + '\n');
+          throw error;
+        })
+        .then(processor.convertToPNG)
+        .then(function(data) {
+          processor.getMimeType(data).then(function(mimetype) {
+            response.writeHead(200, { 'Content-Type' : mimetype });
+            response.end(data);
+          });
+        })
+        .catch(function(error) {
+          response.writeHead(404, { 'Content-Type' : 'text/plain' });
+          response.end('[404] Failed to convert to PNG: ' + query + '\n');
+          throw error;
+        });
     })
 
     .catch(function(error) {
-      console.log("Error: " + error);
-      response.end('[404] Favicon not found for: ' + query + '\n');
+      response.writeHead(404, { 'Content-Type' : 'text/plain' });
+      response.end('[404] Failed to fetch favicon for: ' + query + '\n');
+      console.log(error);
     });
 
 };

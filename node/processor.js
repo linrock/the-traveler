@@ -9,8 +9,8 @@ var exec = require('child_process').exec;
 //
 exports.writeDataToTempFile = function(data) {
   return new Promise(function(resolve, reject) {
-    tmp.file({ postfix: '' }, function(error, path, fd) {
-      fs.write(fd, data, function(error, written, string) {
+    tmp.file({ postfix: '.ico' }, function(error, path, fd) {
+      fs.writeFile(path, data, 'binary', function(error, written, string) {
         if (error) {
           reject(error);
         } else {
@@ -70,15 +70,19 @@ exports.identify = function(data) {
 // returns raw PNG data
 //
 exports.convertToPNG = function(data) {
-  exports.writeDataToTempFile(data)
-    .then(function(filename) {
-      exec('identify ' + filename, function(error, stdout, stderr) {
-        var sizes = stdout.split('\n');
-        console.dir(sizes);
+  return new Promise(function(resolve, reject) {
+    exports.writeDataToTempFile(data)
+      .then(function(filename) {
+        var options = { encoding: 'binary', maxBuffer: 5000 * 1024 };
+        var cmd = 'convert -resize 16x16! ' + filename + '[0] png:fd:1';
+        exec(cmd, options, function(error, stdout, stderr) {
+          if (error || stderr) {
+            console.log("Failed to convert to PNG!");
+            reject(error || stderr);
+          } else {
+            resolve(new Buffer(stdout, 'binary'));
+          }
+        });
       })
-      // exec('convert -resize 16x16! ');
-    })
-    .catch(function(error) {
-      throw error;
-    });
+  });
 };
