@@ -48,9 +48,13 @@ exports.fetchHTMLFromSource = function(query) {
 
 
 exports.fetchFaviconDataFromUrl = function(faviconUrl) {
-  console.log("Checking " + faviconUrl + " for favicon data");
-
   return new Promise(function(resolve, reject) {
+    if (!faviconUrl) {
+      var error = { error: "No favicon url given" };
+      reject(error);
+      throw error;
+    }
+    console.log("Checking " + faviconUrl + " for favicon data");
 
     // var requestOptions = {
     //   url: faviconUrl,
@@ -66,10 +70,10 @@ exports.fetchFaviconDataFromUrl = function(faviconUrl) {
     // });
 
     var options = { encoding: 'binary', maxBuffer: 5000 * 1024 };
-    var cmd = 'curl -sL -m 5 --compressed ' + faviconUrl;
+    var cmd = 'curl -sL -m 5 --compressed --fail --show-error ' + faviconUrl;
     exec(cmd, options, function(error, stdout, stderr) {
-      if (error) {
-        reject(error);
+      if (error || stderr) {
+        reject(error || stderr);
       } else {
         resolve(new Buffer(stdout, 'binary'));
       }
@@ -86,18 +90,17 @@ exports.fetchFaviconFromSource = function(query) {
 
     .then(parser.getFaviconLinkFromHTML)
     .then(function(url) {
-      console.log("This is a URL: " + url);
       return parser.getAbsoluteFaviconUrl(query, url) 
-    })
-    .catch(function(error) {
-      console.dir(error);
-      console.log("Didn't get favicon URL from HTML: " + query);
-      return Promise.resolve(query + "/favicon.ico");
     })
     .then(exports.fetchFaviconDataFromUrl)
     .catch(function(error) {
-      console.log(error);
-      console.log("Failed to fetch favicon data from url");
+      console.log("Didn't get favicon URL from HTML: " + query);
+      return Promise.resolve(query + "/favicon.ico")
+        .then(exports.fetchFaviconDataFromUrl)
+        .catch(function(error) {
+          console.log("Failed to fetch favicon data for " + query);
+          throw error;
+        });
     });
 
 };

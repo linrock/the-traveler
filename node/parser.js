@@ -46,7 +46,7 @@ exports.getFaviconLinkFromHTML = function(html) {
         var $ = window.$;
         var results = $(selectors.join(','));
         if (results.length > 0) {
-          console.log("Found " + results.length + " results");
+          // console.log("Found " + results.length + " results");
           resolve(results.first().attr('href'));
         } else {
           reject({ error: "No favicon links found in HTML" });
