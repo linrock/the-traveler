@@ -4,7 +4,7 @@ var cacheDir = "./data/cache/"
 
 
 exports.fetchFromCache = function(query) {
-  var filename = cacheDir + query;
+  var filename = cacheDir + encodeURIComponent(query);
   return new Promise(function(resolve, reject) {
     if (fs.exists(filename)) {
       fs.readFile(filename, function(error, data) {
@@ -22,7 +22,7 @@ exports.fetchFromCache = function(query) {
 
 
 exports.writeToCache = function(query, data) {
-  var filename = cacheDir + query;
+  var filename = cacheDir + encodeURIComponent(query);
   return new Promise(function(resolve, reject) {
     fs.writeFile(filename, data, function(error) {
       if (error) {

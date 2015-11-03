@@ -84,6 +84,28 @@ exports.fetchFaviconDataFromUrl = function(faviconUrl) {
 };
 
 
+exports.getFinalUrl = function(url) {
+  return new Promise(function(resolve, reject) {
+    var cmd = 'curl -sIL -1 -m 5 --fail --show-error ' + url;
+    exec(cmd, function(error, stdout, stderr) {
+      if (error || stderr) {
+        reject(error || stderr);
+      } else if (stdout.match(/Location: /)) {
+        stdout.split('\n').reverse().forEach(function(row) {
+          var match = row.match(/Location: (.*)/);
+          if (match && match[1]) {
+            resolve(match[1]);
+            return;
+          }
+        });
+      } else {
+        resolve(url);
+      }
+    });
+  });
+};
+
+
 exports.fetchFaviconFromSource = function(query) {
 
   return exports.fetchHTMLFromSource(query)
@@ -95,8 +117,7 @@ exports.fetchFaviconFromSource = function(query) {
     .then(exports.fetchFaviconDataFromUrl)
     .catch(function(error) {
       console.log("Didn't get favicon URL from HTML: " + query);
-      return Promise.resolve(query + "/favicon.ico")
-        .then(exports.fetchFaviconDataFromUrl)
+      return exports.fetchFaviconDataFromUrl(query + "/favicon.ico")
         .catch(function(error) {
           console.log("Failed to fetch favicon data for " + query);
           throw error;
