@@ -22,7 +22,7 @@ var requestHandler = function(request, response) {
       processor.getMimeType(favicon).then(console.log);
       return processor.identify(favicon)
         .then(function(identity) {
-          console.log(identity);
+          // console.log(identity);
           return favicon;
         })
         .catch(function(error) {

@@ -36,17 +36,17 @@ exports.getFaviconLinkFromHTML = function(html) {
   return new Promise(function(resolve, reject) {
     jsdom.env({
       html: html,
+      url: 'http://localhost',   // need this to prevent [TypeError: Invalid URL]
       src: [jquery],
       done: function(err, window) {
         if (err) {
-          console.log("Error parsing HTML");
-          console.log(err);
           reject(err);
-          return;
+          throw err;
         }
         var $ = window.$;
         var results = $(selectors.join(','));
         if (results.length > 0) {
+          console.log("Found " + results.length + " results");
           resolve(results.first().attr('href'));
         } else {
           reject({ error: "No favicon links found in HTML" });

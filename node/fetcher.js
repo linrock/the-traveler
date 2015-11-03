@@ -66,7 +66,8 @@ exports.fetchFaviconDataFromUrl = function(faviconUrl) {
     // });
 
     var options = { encoding: 'binary', maxBuffer: 5000 * 1024 };
-    exec('curl -sL -m 5 ' + faviconUrl, options, function(error, stdout, stderr) {
+    var cmd = 'curl -sL -m 5 --compressed ' + faviconUrl;
+    exec(cmd, options, function(error, stdout, stderr) {
       if (error) {
         reject(error);
       } else {
@@ -85,10 +86,11 @@ exports.fetchFaviconFromSource = function(query) {
 
     .then(parser.getFaviconLinkFromHTML)
     .then(function(url) {
+      console.log("This is a URL: " + url);
       return parser.getAbsoluteFaviconUrl(query, url) 
     })
     .catch(function(error) {
-      console.log(error);
+      console.dir(error);
       console.log("Didn't get favicon URL from HTML: " + query);
       return Promise.resolve(query + "/favicon.ico");
     })
