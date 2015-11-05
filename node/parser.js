@@ -4,7 +4,7 @@ var jsdom = require('jsdom');
 var fs = require('fs');
 var u = require('url');
 
-var jquery = fs.readFileSync('./jquery-2.1.4.js', 'utf-8');
+var jquery = fs.readFileSync('./vendor/jquery-2.1.4.js', 'utf-8');
 
 
 exports.getAbsoluteFaviconUrl = function(url, path) {

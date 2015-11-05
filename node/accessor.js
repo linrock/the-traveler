@@ -14,7 +14,7 @@ var normalizedQuery = function(query) {
 
 
 exports.getFaviconFromCache = function(query) {
-  return cache.fetchFromCache(normalizedQuery(query));
+  return cache.getFavicon(normalizedQuery(query));
 };
 
 
@@ -24,27 +24,24 @@ exports.getFaviconFromSource = function(query) {
 
 
 exports.getFavicon = function(query) {
-  return exports.getFaviconFromCache(normalizedQuery(query))
-    
-    .then(function(favicon) {
-      return favicon;
-    })
-
+  var nQuery = normalizedQuery(query);
+  return exports.getFaviconFromCache(nQuery)
     .catch(function(error) {
-      console.log('error fetching from cache: ' + error);
-
-      return exports.getFaviconFromSource(url)
-
-        .then(function(favicon) {
-          console.log('Fetched from source! ' + favicon);
-          return 'Sure';
-        })
-
-        .catch(function(error) {
-          console.log('Nope from source! ' + error);
-          throw 'Nope';
-        });
-
+      return exports.getFaviconFromSource(nQuery);
     });
+};
 
+
+exports.getAndWriteFavicon = function(query) {
+  var nQuery = normalizedQuery(query);
+  return exports.getFaviconFromCache(nQuery)
+    .catch(function(error) {
+      return exports.getFaviconFromSource(nQuery)
+        .then(function(favicon) {
+          return cache.writeFavicon(nQuery, favicon)
+            .then(function(data) {
+              return favicon;
+            });
+        });
+    });
 };

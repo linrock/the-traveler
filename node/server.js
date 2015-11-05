@@ -10,13 +10,12 @@ var requestHandler = function(request, response) {
   var query = params.q;
 
   if (!query) {
-    console.log("-- NO QUERY --");
     response.writeHead(404);
     response.end();
     return;
   }
 
-  accessor.getFaviconFromSource(query)
+  accessor.getAndWriteFavicon(query)
 
     .then(function(favicon) {
       processor.getMimeType(favicon).then(console.log);
@@ -53,8 +52,9 @@ var requestHandler = function(request, response) {
 };
 
 
+var PORT = 8000;
 var server = http.createServer(requestHandler);
 
-server.listen(8000, function() {
-  console.log("Server listening on localhost:8000");
+server.listen(PORT, function() {
+  console.log("Server listening on localhost:" + PORT);
 });

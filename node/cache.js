@@ -1,35 +1,89 @@
 var exports = module.exports = {};
 
-var cacheDir = "./data/cache/"
+var fs = require('fs');
 
 
-exports.fetchFromCache = function(query) {
-  var filename = cacheDir + encodeURIComponent(query);
+const CACHE_DIR = "./data/cache/"
+
+
+var validateData = function(data) {
+  return data.status && typeof data === 'object';
+};
+
+var serialize = function(data) {
+  return JSON.stringify(data);
+};
+
+var deserialize = function(data) {
+  return JSON.parse(data);
+};
+
+
+var writeDataToCache = function(query, data) {
+  var filename = CACHE_DIR + encodeURIComponent(query);
   return new Promise(function(resolve, reject) {
-    if (fs.exists(filename)) {
-      fs.readFile(filename, function(error, data) {
+    if (validateData(data)) {
+      fs.writeFile(filename, serialize(data), function(error) {
         if (error) {
           reject({ error: error });
+          return;
         }
-        console.log('[200] ' + filename + ' found');
+        console.log('[200] ' + filename + ' written');
         resolve(data);
       });
     } else {
-      reject({ error: 'Not found' });
+      reject({ error: 'Invalid data format' });
     }
   });
 };
 
 
-exports.writeToCache = function(query, data) {
-  var filename = cacheDir + encodeURIComponent(query);
+var fetchFromCache = function(query) {
+  var filename = CACHE_DIR + encodeURIComponent(query);
   return new Promise(function(resolve, reject) {
-    fs.writeFile(filename, data, function(error) {
+    console.log(filename);
+    fs.stat(filename, function(error, stats) {
       if (error) {
-        reject({ error: error });
+        reject(error);
+      } else if (!stats.isFile()) {
+        reject({ error: filename + ' is not a file' });
+      } else {
+        fs.readFile(filename, function(error, serialized) {
+          if (error) {
+            reject({ error: error });
+            return;
+          }
+          console.log('[200] ' + filename + ' found');
+          var data = deserialize(serialized);
+          if (validateData(data)) {
+            resolve(data);
+          } else {
+            reject({ error: 'Invalid data format' });
+          }
+        });
       }
-      console.log('[200] ' + filename + ' written');
-      resolve(data);
     });
   });
+};
+
+
+exports.getFavicon = function(query) {
+  return fetchFromCache(query)
+    .then(function(data) {
+      if (data.favicon) {
+        return new Buffer(data.favicon, 'base64');
+      } else {
+        throw { error: "Favicon not found for " + query };
+      }
+    });
+};
+
+
+exports.writeFavicon = function(query, faviconData) {
+  var data = {
+    status: 200,
+    favicon: new Buffer(faviconData).toString('base64'),
+    expires: Date.now() + 30 * 86400 * 1000
+  };
+  return writeDataToCache(query, data);
 };
