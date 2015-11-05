@@ -4,6 +4,8 @@ module Favicon
   #
   class Accessor
 
+    attr_accessor :fetcher
+
     def initialize(url, options = {})
       @url = url
       if @url =~ /https?:\/\//
@@ -12,6 +14,8 @@ module Favicon
         @host = url
       end
       @options = options
+      @fetcher = Favicon::Fetcher.new(url)
+      @cache = Favcion::Cache.new(url)
     end
 
     def get_favicon_image_from_cache(url)
@@ -19,8 +23,7 @@ module Favicon
     end
 
     def get_favicon_image_from_url(url)
-      fetcher = Favicon::Fetcher.new(url)
-      image = fetcher.fetch
+      image = @fetcher.fetch
       return unless image
 
       raw_image = image.to_png

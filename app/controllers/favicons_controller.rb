@@ -3,7 +3,7 @@ class FaviconsController < ApplicationController
   # Homepage - shows a list of recent favicons
   #
   def index
-    @use_spritesheet = true
+    @use_spritesheet = false
     if @use_spritesheet
       @spritesheet = Spritesheet.new
       @spritesheet.generate
@@ -35,8 +35,8 @@ class FaviconsController < ApplicationController
     end
     favicon_urls = (favicon_urls + hostnames).uniq
     @favicon_urls = favicon_urls.map {|url|
-      "/favicons?q=#{url}"
-    }
+      "http://localhost:8000/favicons?q=#{url}"
+    }.take(160)
   end
 
 end

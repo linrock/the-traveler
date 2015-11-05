@@ -4,29 +4,40 @@ module Favicon
   #
   class Data
 
+    attr_accessor :data
+
     def initialize(data)
       @data = data
+    end
+
+    def self.get_mime_type(data)
+      begin
+        t = Tempfile.new "favicon_data"
+        t.binmode
+        t.write data
+        t.close
+        m_type = `file -b --mime-type #{t.path.to_s}`.strip
+      ensure
+        t.unlink
+      end
+      m_type
+    end
+
+    def mime_type
+      self.class.get_mime_type(@data)
     end
 
     # Does the data look like a valid favicon?
     def valid?
       return false if @data.length == 0
-      begin
-        t = Tempfile.new "favicon"
-        t.write @data
-        t.close
-        mime_type = `file -b --mime-type #{t.path.to_s}`.strip
-      ensure
-        t.unlink
-      end
-      return false if mime_type =~ /(text|html)/
-      true
+      mime_type !~ /(text|html)/
     end
 
     # Export data as a 16x16 png
     def to_png
       begin
         t = Tempfile.new(["favicon", ".ico"])
+        t.binmode
         t.write @data
         t.close
         sizes = `identify #{t.path.to_s}`.split /\n/
@@ -49,6 +60,10 @@ module Favicon
     def base64_png
       # @img_url = "data:image/png;base64,#{encoded}"
       Base64.encode64(to_png).split(/\s+/).join
+    end
+
+    def inspect
+      "#<Favicon::Data @data=#{@data.nil? ? nil : @data.size}>"
     end
 
   end

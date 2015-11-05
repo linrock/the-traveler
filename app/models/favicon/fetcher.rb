@@ -14,26 +14,36 @@ module Favicon
                        'link[rel="apple-touch-icon"]'
                      ]
 
-    attr_accessor :final_url
+    attr_accessor :query_url, :final_url, :favicon_url, :candidate_urls, :raw_data
 
     def initialize(url)
-      @url = url
+      @query_url = normalize_url(url)
       @final_url = nil
+      @favicon_url = nil
       @html = nil
-      @candidates = []
+      @candidate_urls = []
+      @raw_data = nil
     end
 
     def fetch
-      @html = `curl -sL --compressed -1 -m #{TIMEOUT} #{@url}`
+      @html = `curl -sL --compressed -1 -m #{TIMEOUT} #{@query_url}`
       get_final_url
       get_candidate_favicon_urls
       get_favicon
     end
 
     def get_favicon
-      @candidates.each do |url|
+      return @raw_data if @raw_data.present?
+      @raw_data = get_favicon_data_from_candidate_urls
+    end
+
+    def get_favicon_data_from_candidate_urls
+      @candidate_urls.each do |url|
         d = Favicon::Data.new(get_favicon_data(url))
-        return d if d.valid?
+        if d.valid?
+          @favicon_url = url
+          return d
+        end
       end
       nil
     end
@@ -44,27 +54,27 @@ module Favicon
       uri = URI @final_url
       root = "#{uri.scheme}://#{uri.host}"
       doc = Nokogiri.parse @html
-      @candidates = doc.css(ICON_SELECTORS.join(",")).map do |e|
+      @candidate_urls = doc.css(ICON_SELECTORS.join(",")).map do |e|
         href = e.attr('href')
-        href = URI.join(root, href).to_s if href !~ /^http/
+        if href.starts_with?("//")
+          href = "#{uri.scheme}:#{href}"
+        elsif href !~ /^http/
+          href = URI.join(root, href).to_s
+        end
         href
       end
-      @candidates << URI.join(root, "favicon.ico").to_s
-      @candidates << URI.join(root, "favicon.png").to_s
+      @candidate_urls << URI.join(root, "favicon.ico").to_s
+      @candidate_urls << URI.join(root, "favicon.png").to_s
     end
 
     # Follow redirects from the given url to get to the actual url
     #
     def get_final_url
-      output = `curl -sIL -1 -m #{TIMEOUT} #{@url}`
+      output = `curl -sIL -1 -m #{TIMEOUT} #{@query_url}`
       final = output.scan(/Location: (.*)/)[-1]
       @final_url = final && final[0].strip
       return @final_url if @final_url.present?
-      @final_url = if @url.starts_with?("http://")
-                     @url
-                   else
-                     "http://#{@url}"
-                   end
+      @final_url = @query_url
     end
 
     def get_favicon_data(url)
@@ -72,6 +82,24 @@ module Favicon
       `curl -sL -m #{TIMEOUT} #{url}`
     end
 
+    def get_results
+      {
+        :query_url    => @query_url,
+        :final_url    => @final_url,
+        :favicon_url  => @favicon_url,
+        :raw_data     => @raw_data.data
+      }
+    end
+
+    private
+
+    def normalize_url(url)
+      if url =~ /https?:\/\//
+        url
+      else
+        "http://#{url}"
+      end
+    end
   end
 
 end
