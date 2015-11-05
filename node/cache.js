@@ -18,9 +18,13 @@ var deserialize = function(data) {
   return JSON.parse(data);
 };
 
+var cacheKey = function(query) {
+  return CACHE_DIR + encodeURIComponent(query);
+}
+
 
 var writeDataToCache = function(query, data) {
-  var filename = CACHE_DIR + encodeURIComponent(query);
+  var filename = cacheKey(query);
   return new Promise(function(resolve, reject) {
     if (validateData(data)) {
       fs.writeFile(filename, serialize(data), function(error) {
@@ -38,8 +42,8 @@ var writeDataToCache = function(query, data) {
 };
 
 
-var fetchFromCache = function(query) {
-  var filename = CACHE_DIR + encodeURIComponent(query);
+var fetchDataFromCache = function(query) {
+  var filename = cacheKey(query);
   return new Promise(function(resolve, reject) {
     console.log(filename);
     fs.stat(filename, function(error, stats) {
@@ -68,7 +72,7 @@ var fetchFromCache = function(query) {
 
 
 exports.getFavicon = function(query) {
-  return fetchFromCache(query)
+  return fetchDataFromCache(query)
     .then(function(data) {
       if (data.favicon) {
         return new Buffer(data.favicon, 'base64');

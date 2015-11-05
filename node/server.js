@@ -15,6 +15,7 @@ var requestHandler = function(request, response) {
     return;
   }
 
+  // accessor.getFaviconFromSource(query)
   accessor.getAndWriteFavicon(query)
 
     .then(function(favicon) {
