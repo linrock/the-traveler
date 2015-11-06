@@ -1,0 +1,3 @@
+Known issues:
+
+* Can't handle XWD file format on OSX (https://instacastcloud.com)

@@ -66,7 +66,7 @@ module Favicon
     #
     def get_candidate_favicon_urls
       doc = Nokogiri.parse @html
-      @candidate_urls = doc.css(ICON_SELECTORS.join(",")).map {|e| e.attr('href') }
+      @candidate_urls = doc.css(ICON_SELECTORS.join(",")).map {|e| e.attr('href') }.compact
       @candidate_urls.sort_by! {|href|
         if href =~ /\.ico/
           0
@@ -79,6 +79,7 @@ module Favicon
       uri = URI @final_url
       root = "#{uri.scheme}://#{uri.host}"
       @candidate_urls.map! do |href|
+        href = URI.encode(href)
         if href.starts_with? "//"
           href = "#{uri.scheme}:#{href}"
         elsif href !~ /\Ahttp/
@@ -93,7 +94,7 @@ module Favicon
     # Follow redirects from the query url to get to the last url
     #
     def get_final_url
-      output = `curl -sIL -1 -m #{TIMEOUT} #{@query_url}`
+      output = `curl -sIL -1 -m #{TIMEOUT} "#{@query_url}"`
       final = output.scan(/Location: (.*)/)[-1]
       final_url = final && final[0].strip
       if final_url.present?
@@ -111,7 +112,7 @@ module Favicon
 
     def get_favicon_data(url)
       return Base64.decode64(url.split(',')[1]) if url =~ /^data:/
-      `curl -sL -k -m #{TIMEOUT} #{url}`
+      `curl -sL -k --compressed -m #{TIMEOUT} "#{url}"`
     end
 
     def get_urls

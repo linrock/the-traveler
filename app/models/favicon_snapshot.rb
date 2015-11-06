@@ -55,6 +55,13 @@ class FaviconSnapshot < ActiveRecord::Base
     "data:image/png;base64,#{Base64.encode64(png_data).split(/\s+/).join}"
   end
 
+  def raw_data_to_tmp_file
+    t = Tempfile.new "favicon_data"
+    t.binmode
+    t.write raw_data
+    t
+  end
+
   private
 
   def self.normalize_url(url)

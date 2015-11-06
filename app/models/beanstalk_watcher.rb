@@ -23,6 +23,7 @@ class BeanstalkWatcher
           puts "Failed to fetch for #{url}"
           puts "#{e.class}: #{e.message}"
           unless ["Favicon::NotFound", "Favicon::CurlError"].include? e.class.to_s
+            next if e.message.include? "`XWD'" # TODO ignoring XWD file formats
             binding.pry
             @tube.put url, :pri => 0
           end

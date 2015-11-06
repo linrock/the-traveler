@@ -1,3 +1,6 @@
+require 'open3'
+
+
 module Favicon
 
   # For handling anything related to the data of the favicon itself
@@ -40,7 +43,7 @@ module Favicon
         t.binmode
         t.write @data
         t.close
-        sizes = `identify #{t.path.to_s}`.split /\n/
+        sizes = run_imagemagick_cmd("identify #{t.path.to_s}").split /\n/
         files = []
         %w(16x16 32x32 64x64).each do |dims|
           %w(32-bit 24-bit 16-bit 8-bit).each do |bd|
@@ -48,9 +51,9 @@ module Favicon
                            map    {|x| x.split(' ')[0]}
           end
         end
-
-        data = `convert -resize 16x16! #{files.uniq[0] || "#{t.path.to_s}[0]"} png:fd:1`
-        raise "Empty png" if data.empty?
+        cmd = "convert -resize 16x16! #{files.uniq[0] || "#{t.path.to_s}[0]"} png:fd:1"
+        data = run_imagemagick_cmd(cmd, true)
+        raise Favicon::InvalidData.new("Empty png") if data.empty?
         return data
       ensure
         t.unlink
@@ -58,12 +61,22 @@ module Favicon
     end
 
     def base64_png
-      # @img_url = "data:image/png;base64,#{encoded}"
       Base64.encode64(to_png).split(/\s+/).join
     end
 
     def inspect
       "#<Favicon::Data @data=#{@data.nil? ? nil : @data.size}>"
+    end
+
+    private
+
+    def run_imagemagick_cmd(cmd, binmode = false)
+      stdin, stdout, stderr, t = Open3.popen3(cmd)
+      if (error = stderr.read.strip).present?
+        raise Favicon::ImageMagickError.new(error)
+      end
+      stdout.binmode if binmode
+      stdout.read.strip
     end
 
   end
