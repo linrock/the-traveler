@@ -31,6 +31,7 @@ class FaviconSnapshot < ActiveRecord::Base
       favicon_snapshot.save!
       favicon_snapshot
     end
+    alias_method :lookup!, :find_or_fetch!
 
   end
 

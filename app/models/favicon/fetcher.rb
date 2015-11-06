@@ -64,8 +64,8 @@ module Favicon
           3
         end
       }
-      @candidate_urls.map do |href|
-        if href.starts_with?("//")
+      @candidate_urls.map! do |href|
+        if href.starts_with? "//"
           href = "#{uri.scheme}:#{href}"
         elsif href !~ /\Ahttp/
           href = URI.join(root, href).to_s
@@ -81,7 +81,16 @@ module Favicon
     def get_final_url
       output = `curl -sIL -1 -m #{TIMEOUT} #{@query_url}`
       final = output.scan(/Location: (.*)/)[-1]
-      @final_url = final && final[0].strip
+      final_url = final && final[0].strip
+      if final_url.present?
+        if final_url.starts_with? "/"
+          uri = URI @query_url
+          root = "#{uri.scheme}://#{uri.host}"
+          @final_url = URI.join(root, final_url)
+        else
+          @final_url = final_url
+        end
+      end
       return @final_url if @final_url.present?
       @final_url = @query_url
     end
