@@ -15,7 +15,7 @@ module Favicon
       end
       @options = options
       @fetcher = Favicon::Fetcher.new(url)
-      @cache = Favcion::Cache.new(url)
+      @cache = Favicon::Cache.new(url)
     end
 
     def get_favicon_image_from_cache(url)

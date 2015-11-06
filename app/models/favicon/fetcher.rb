@@ -54,11 +54,20 @@ module Favicon
       uri = URI @final_url
       root = "#{uri.scheme}://#{uri.host}"
       doc = Nokogiri.parse @html
-      @candidate_urls = doc.css(ICON_SELECTORS.join(",")).map do |e|
-        href = e.attr('href')
+      @candidate_urls = doc.css(ICON_SELECTORS.join(",")).map {|e| e.attr('href') }
+      @candidate_urls.sort_by! {|href|
+        if href =~ /\.ico/
+          0
+        elsif href =~ /\.png/
+          1
+        else
+          3
+        end
+      }
+      @candidate_urls.map do |href|
         if href.starts_with?("//")
           href = "#{uri.scheme}:#{href}"
-        elsif href !~ /^http/
+        elsif href !~ /\Ahttp/
           href = URI.join(root, href).to_s
         end
         href

@@ -8,7 +8,8 @@ class FaviconsController < ApplicationController
       @spritesheet = Spritesheet.new
       @spritesheet.generate
     else
-      set_favicon_urls
+      # set_favicon_urls_from_cache
+      set_favicon_urls_from_snapshots
     end
   end
 
@@ -27,7 +28,7 @@ class FaviconsController < ApplicationController
 
   private
 
-  def set_favicon_urls
+  def set_favicon_urls_from_cache
     favicon_urls = Favicon::Cache.get_cached_favicon_urls
     hostnames = open(Rails.root.join("hostnames")).read.strip.split(/\n/)
     unless favicon_urls.present?
@@ -37,6 +38,12 @@ class FaviconsController < ApplicationController
     @favicon_urls = favicon_urls.map {|url|
       "http://localhost:8000/favicons?q=#{url}"
     }.take(160)
+  end
+
+  def set_favicon_urls_from_snapshots
+    @favicon_urls = FaviconSnapshot.order("id DESC").map {|snapshot|
+      snapshot.favicon_data_uri
+    }
   end
 
 end
