@@ -32,10 +32,17 @@
 
       <% end %>
 
-    <% else %>
+    <% elsif @favicon_urls.present? %>
 
       <% @favicon_urls.each do |img_url| %>
         <img class="favicon" src="<%= img_url %>" title="<%= img_url %>">
+      <% end %>
+
+    <% elsif @favicon_snapshots.present? %>
+
+      <% @favicon_snapshots.each do |snapshot| %>
+        <img class="favicon" src="<%= snapshot.favicon_data_uri %>"
+                             title="<%= snapshot.query_url %>">
       <% end %>
 
     <% end %>

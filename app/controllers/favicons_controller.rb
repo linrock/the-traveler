@@ -41,9 +41,7 @@ class FaviconsController < ApplicationController
   end
 
   def set_favicon_urls_from_snapshots
-    @favicon_urls = FaviconSnapshot.order("id DESC").map {|snapshot|
-      snapshot.favicon_data_uri
-    }
+    @favicon_snapshots = FaviconSnapshot.order("id DESC").limit(180)
   end
 
 end
