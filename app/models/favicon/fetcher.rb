@@ -29,7 +29,7 @@ module Favicon
     end
 
     def http_get(url)
-      cmd = "curl -sL --compressed -1 -m #{TIMEOUT} --fail --show-error #{url}"
+      cmd = "curl -sL -k --compressed -1 -m #{TIMEOUT} --fail --show-error #{url}"
       stdin, stdout, stderr, t = Open3.popen3(cmd)
       @html = stdout.read.strip
       if (err = stderr.read.strip).present?
@@ -111,7 +111,7 @@ module Favicon
 
     def get_favicon_data(url)
       return Base64.decode64(url.split(',')[1]) if url =~ /^data:/
-      `curl -sL -m #{TIMEOUT} #{url}`
+      `curl -sL -k -m #{TIMEOUT} #{url}`
     end
 
     def get_urls

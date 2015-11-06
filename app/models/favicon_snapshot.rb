@@ -52,7 +52,7 @@ class FaviconSnapshot < ActiveRecord::Base
   end
 
   def favicon_data_uri
-    "data:image/png;base64,#{data.base64_png}"
+    "data:image/png;base64,#{Base64.encode64(png_data).split(/\s+/).join}"
   end
 
   private

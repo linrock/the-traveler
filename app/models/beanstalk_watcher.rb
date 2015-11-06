@@ -16,15 +16,18 @@ class BeanstalkWatcher
         url = job.body
         puts "Checking url: #{url}"
         begin
-          @snapshot = FaviconSnapshot.lookup!(url)
+          snapshot = FaviconSnapshot.find_or_init_with_query(url)
+          snapshot.init_from_fetcher_results
+          snapshot.save!
         rescue => e
           puts "Failed to fetch for #{url}"
           puts "#{e.class}: #{e.message}"
           unless ["Favicon::NotFound", "Favicon::CurlError"].include? e.class.to_s
             binding.pry
           end
+        ensure
+          snapshot = nil
         end
-        remove_instance_variable :@snapshot
         job.delete
       end
     ensure
