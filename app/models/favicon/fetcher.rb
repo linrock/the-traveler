@@ -17,7 +17,7 @@ module Favicon
                        'link[rel="apple-touch-icon"]'
                      ]
 
-    attr_accessor :query_url, :final_url, :favicon_url, :candidate_urls, :raw_data, :error
+    attr_accessor :query_url, :final_url, :favicon_url, :candidate_urls, :raw_data
 
     def initialize(url)
       @query_url = normalize_url(url)
@@ -26,7 +26,6 @@ module Favicon
       @html = nil
       @candidate_urls = []
       @raw_data = nil
-      @error = nil
     end
 
     def http_get(url)
@@ -34,13 +33,12 @@ module Favicon
       stdin, stdout, stderr, t = Open3.popen3(cmd)
       @html = stdout.read.strip
       if (err = stderr.read.strip).present?
-        @error = err
+        raise Favicon::CurlError.new(err)
       end
     end
 
     def fetch
       http_get @query_url
-      raise @error if @error
       get_final_url
       get_candidate_favicon_urls
       get_favicon
@@ -49,7 +47,7 @@ module Favicon
     def get_favicon
       return @raw_data if @raw_data.present?
       @raw_data = get_favicon_data_from_candidate_urls
-      @error = "Favicon data not found" unless @raw_data
+      raise Favicon::NotFound.new(@query_url) unless @raw_data
       @raw_data
     end
 
@@ -92,7 +90,7 @@ module Favicon
       @candidate_urls << URI.join(root, "favicon.png").to_s
     end
 
-    # Follow redirects from the given url to get to the actual url
+    # Follow redirects from the query url to get to the last url
     #
     def get_final_url
       output = `curl -sIL -1 -m #{TIMEOUT} #{@query_url}`

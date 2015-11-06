@@ -37,9 +37,6 @@ class FaviconSnapshot < ActiveRecord::Base
 
   def init_from_fetcher_results
     data = fetcher.fetch
-    if fetcher.error
-      raise fetcher.error
-    end
     self.attributes = fetcher.get_urls
     self.raw_data = data.data
     self.png_data = data.to_png
@@ -61,6 +58,7 @@ class FaviconSnapshot < ActiveRecord::Base
   private
 
   def self.normalize_url(url)
+    url = url.strip.downcase
     if url =~ /\Ahttps?:\/\//
       url
     else
