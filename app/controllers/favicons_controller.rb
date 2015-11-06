@@ -42,12 +42,12 @@ class FaviconsController < ApplicationController
   end
 
   def set_favicon_urls_from_snapshots
-    @favicon_snapshots = FaviconSnapshot.order("id DESC").limit(240)
+    @favicon_snapshots = FaviconSnapshot.order("id DESC").limit(800)
   end
 
   def set_favicon_urls_from_unique_favicon_snapshots
     s = Set.new
-    @favicon_snapshots = FaviconSnapshot.order("id DESC").limit(180)
+    @favicon_snapshots = FaviconSnapshot.order("id DESC").limit(800)
     @favicon_snapshots.to_a.delete_if do |snapshot|
       data_uri = snapshot.favicon_data_uri
       return true if s.include? data_uri

@@ -97,12 +97,12 @@ module Favicon
       final = output.scan(/Location: (.*)/)[-1]
       final_url = final && final[0].strip
       if final_url.present?
-        if final_url.starts_with? "/"
+        if final_url.starts_with? "http"
+          @final_url = final_url
+        else
           uri = URI @query_url
           root = "#{uri.scheme}://#{uri.host}"
           @final_url = URI.join(root, final_url)
-        else
-          @final_url = final_url
         end
       end
       return @final_url if @final_url.present?

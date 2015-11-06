@@ -5,8 +5,8 @@ class BeanstalkWatcher
     @tube = @beanstalk.tubes["favicon_urls"]
   end
 
-  def add_url(url)
-    @tube.put url
+  def add_url(url, priority = 10)
+    @tube.put url, :pri => priority
   end
 
   def run
@@ -24,6 +24,7 @@ class BeanstalkWatcher
           puts "#{e.class}: #{e.message}"
           unless ["Favicon::NotFound", "Favicon::CurlError"].include? e.class.to_s
             binding.pry
+            @tube.put url, :pri => -1
           end
         ensure
           snapshot = nil
