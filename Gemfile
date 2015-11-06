@@ -27,6 +27,7 @@ gem 'pry'
 gem 'dalli'
 gem 'yahns'
 gem 'puma'
+gem 'beaneater'
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'
