@@ -6,7 +6,7 @@ class Spritesheet
     @sprites = []
   end
 
-  def generate
+  def regenerate
     dir = "/tmp/ffetcher/favicons"
     `mkdir -p #{dir}`
     image_filenames = []
@@ -26,6 +26,14 @@ class Spritesheet
     `convert #{image_filenames.join " "} -colorspace RGB +append png:#{merged_image}`
     @updated_at = Time.now.to_i
     `cp #{merged_image} #{Rails.root.join("app/assets/images/favicons.png")}`
+  end
+
+  def regenerate_forever
+    loop do
+      puts "[#{Time.now}] Regenerating spritesheet..."
+      regenerate
+      sleep 3600
+    end
   end
 
   private
