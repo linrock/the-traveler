@@ -37,7 +37,11 @@ class FaviconSnapshot < ActiveRecord::Base
 
   def init_from_fetcher_results
     data = fetcher.fetch
-    self.attributes = fetcher.get_results
+    if fetcher.error
+      raise fetcher.error
+    end
+    self.attributes = fetcher.get_urls
+    self.raw_data = data.data
     self.png_data = data.to_png
   end
 

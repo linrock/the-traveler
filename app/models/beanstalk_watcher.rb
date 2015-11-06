@@ -14,8 +14,14 @@ class BeanstalkWatcher
     begin
       while (job = @tube.reserve)
         url = job.body
-        puts "Got url: #{url}"
-        FaviconSnapshot.lookup!(url) rescue binding.pry
+        puts "Checking url: #{url}"
+        begin
+          FaviconSnapshot.lookup!(url)
+        rescue => e
+          puts "Failed to fetch for #{url}"
+          puts "Error: #{e}"
+          binding.pry
+        end
         job.delete
       end
     ensure

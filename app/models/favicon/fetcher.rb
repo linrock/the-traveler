@@ -1,3 +1,6 @@
+require 'open3'
+
+
 module Favicon
 
   # Actually go and grab the favicon from the given url
@@ -14,7 +17,7 @@ module Favicon
                        'link[rel="apple-touch-icon"]'
                      ]
 
-    attr_accessor :query_url, :final_url, :favicon_url, :candidate_urls, :raw_data
+    attr_accessor :query_url, :final_url, :favicon_url, :candidate_urls, :raw_data, :error
 
     def initialize(url)
       @query_url = normalize_url(url)
@@ -23,10 +26,21 @@ module Favicon
       @html = nil
       @candidate_urls = []
       @raw_data = nil
+      @error = nil
+    end
+
+    def http_get(url)
+      cmd = "curl -sL --compressed -1 -m #{TIMEOUT} --fail --show-error #{url}"
+      stdin, stdout, stderr, t = Open3.popen3(cmd)
+      @html = stdout.read.strip
+      if (err = stderr.read.strip).present?
+        @error = err
+      end
     end
 
     def fetch
-      @html = `curl -sL --compressed -1 -m #{TIMEOUT} #{@query_url}`
+      http_get @query_url
+      raise @error if @error
       get_final_url
       get_candidate_favicon_urls
       get_favicon
@@ -35,6 +49,8 @@ module Favicon
     def get_favicon
       return @raw_data if @raw_data.present?
       @raw_data = get_favicon_data_from_candidate_urls
+      @error = "Favicon data not found" unless @raw_data
+      @raw_data
     end
 
     def get_favicon_data_from_candidate_urls
@@ -51,8 +67,6 @@ module Favicon
     # Tries to find favicon urls from the html content of given url
     #
     def get_candidate_favicon_urls
-      uri = URI @final_url
-      root = "#{uri.scheme}://#{uri.host}"
       doc = Nokogiri.parse @html
       @candidate_urls = doc.css(ICON_SELECTORS.join(",")).map {|e| e.attr('href') }
       @candidate_urls.sort_by! {|href|
@@ -64,6 +78,8 @@ module Favicon
           3
         end
       }
+      uri = URI @final_url
+      root = "#{uri.scheme}://#{uri.host}"
       @candidate_urls.map! do |href|
         if href.starts_with? "//"
           href = "#{uri.scheme}:#{href}"
@@ -100,12 +116,11 @@ module Favicon
       `curl -sL -m #{TIMEOUT} #{url}`
     end
 
-    def get_results
+    def get_urls
       {
         :query_url    => @query_url,
         :final_url    => @final_url,
-        :favicon_url  => @favicon_url,
-        :raw_data     => @raw_data.data
+        :favicon_url  => @favicon_url
       }
     end
 
@@ -118,6 +133,7 @@ module Favicon
         "http://#{url}"
       end
     end
+
   end
 
 end
