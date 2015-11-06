@@ -17,7 +17,7 @@ module Favicon
                        'link[rel="apple-touch-icon"]'
                      ]
 
-    attr_accessor :query_url, :final_url, :favicon_url, :candidate_urls, :raw_data
+    attr_accessor :query_url, :final_url, :favicon_url, :candidate_urls, :html, :raw_data
 
     def initialize(url)
       @query_url = normalize_url(url)
@@ -31,7 +31,7 @@ module Favicon
     def http_get(url)
       cmd = "curl -sL -k --compressed -1 -m #{TIMEOUT} --fail --show-error #{url}"
       stdin, stdout, stderr, t = Open3.popen3(cmd)
-      @html = stdout.read.strip
+      @html = encode_utf8 stdout.read.strip
       if (err = stderr.read.strip).present?
         raise Favicon::CurlError.new(err)
       end
@@ -130,6 +130,11 @@ module Favicon
       else
         "http://#{url}"
       end
+    end
+
+    def encode_utf8(text)
+      return text if text.valid_encoding?
+      text.encode("UTF-8", :invalid => :replace, :undef => :replace, :replace => '')
     end
 
   end
