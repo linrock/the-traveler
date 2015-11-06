@@ -30,7 +30,7 @@ module Favicon
     # Does the data look like a valid favicon?
     def valid?
       return false if @data.length <= 1
-      mime_type !~ /(text|html)/
+      mime_type !~ /(text|html|xml)/
     end
 
     # Export data as a 16x16 png

@@ -24,7 +24,7 @@ class BeanstalkWatcher
           puts "#{e.class}: #{e.message}"
           unless ["Favicon::NotFound", "Favicon::CurlError"].include? e.class.to_s
             binding.pry
-            @tube.put url, :pri => -1
+            @tube.put url, :pri => 0
           end
         ensure
           snapshot = nil
