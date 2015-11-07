@@ -26,6 +26,16 @@ module Favicon
       m_type
     end
 
+    def self.run_imagemagick_cmd(cmd, binmode = false)
+      stdin, stdout, stderr, t = Open3.popen3(cmd)
+      stdout.binmode if binmode
+      output = stdout.read.strip
+      if output.empty? && (error = stderr.read.strip).present?
+        raise Favicon::ImageMagickError.new(error)
+      end
+      output
+    end
+
     def mime_type
       self.class.get_mime_type(@data)
     end
@@ -43,7 +53,7 @@ module Favicon
         t.binmode
         t.write @data
         t.close
-        sizes = run_imagemagick_cmd("identify #{t.path.to_s}").split /\n/
+        sizes = self.class.run_imagemagick_cmd("identify #{t.path.to_s}").split /\n/
         files = []
         %w(16x16 32x32 64x64).each do |dims|
           %w(32-bit 24-bit 16-bit 8-bit).each do |bd|
@@ -52,7 +62,7 @@ module Favicon
           end
         end
         cmd = "convert -resize 16x16! #{files.uniq[0] || "#{t.path.to_s}[0]"} png:fd:1"
-        data = run_imagemagick_cmd(cmd, true)
+        data = self.class.run_imagemagick_cmd(cmd, true)
         raise Favicon::InvalidData.new("Empty png") if data.empty?
         return data
       ensure
@@ -66,17 +76,6 @@ module Favicon
 
     def inspect
       "#<Favicon::Data @data=#{@data.nil? ? nil : @data.size}>"
-    end
-
-    private
-
-    def run_imagemagick_cmd(cmd, binmode = false)
-      stdin, stdout, stderr, t = Open3.popen3(cmd)
-      if (error = stderr.read.strip).present?
-        raise Favicon::ImageMagickError.new(error)
-      end
-      stdout.binmode if binmode
-      stdout.read.strip
     end
 
   end
