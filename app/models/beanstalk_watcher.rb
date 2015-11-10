@@ -21,6 +21,7 @@ class BeanstalkWatcher
           snapshot.save!
         rescue => e
           puts "Failed to fetch for #{url}"
+          puts e.backtrace
           puts "#{e.class}: #{e.message}"
           unless ["Favicon::NotFound", "Favicon::CurlError"].include? e.class.to_s
             next if e.message.include? "`XWD'" # TODO ignoring XWD file formats

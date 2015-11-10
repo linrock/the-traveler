@@ -99,11 +99,11 @@ module Favicon
       final_url = final && final[0].strip
       if final_url.present?
         if final_url.starts_with? "http"
-          @final_url = final_url
+          @final_url = URI.encode final_url
         else
           uri = URI @query_url
           root = "#{uri.scheme}://#{uri.host}"
-          @final_url = URI.join(root, final_url)
+          @final_url = URI.encode URI.join(root, final_url).to_s
         end
       end
       return @final_url if @final_url.present?
@@ -126,6 +126,7 @@ module Favicon
     private
 
     def normalize_url(url)
+      url = URI.encode url.strip.downcase
       if url =~ /https?:\/\//
         url
       else

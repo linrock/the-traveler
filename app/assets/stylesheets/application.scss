@@ -51,10 +51,10 @@ input[type="text"] {
   float: left;
   width: 16px;
   height: 16px;
-  margin-right: 8px;
-  margin-bottom: 8px;
+  margin-right: 12px;
+  margin-bottom: 12px;
 
-  &:nth-child(8n) {
+  &:nth-child(7n) {
     margin-right: 0;
   }
 
