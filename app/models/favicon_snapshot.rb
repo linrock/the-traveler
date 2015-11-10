@@ -65,7 +65,7 @@ class FaviconSnapshot < ActiveRecord::Base
   private
 
   def self.normalize_url(url)
-    url = url.strip.downcase
+    url = URI.encode url.strip.downcase
     if url =~ /\Ahttps?:\/\//
       url
     else
