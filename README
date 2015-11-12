@@ -3,4 +3,5 @@ Known issues:
 * Can't handle XWD file format on OSX (https://instacastcloud.com)
 * Failed to fetch for antitheft.norton.com
   Favicon::CurlError: curl: (56) SSLRead() return error -9806
-
+* Handle invalid urls in element HREF
+  * www.wetheurban.com - {http://i50.tinypic.com/wbuzcn.png}

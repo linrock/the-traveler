@@ -31,7 +31,7 @@ module Favicon
     def http_get(url)
       cmd = "curl -sL -k --compressed -1 -m #{TIMEOUT} --fail --show-error #{url}"
       stdin, stdout, stderr, t = Open3.popen3(cmd)
-      @html = encode_utf8 stdout.read.strip
+      @html = encode_utf8(stdout.read).strip
       if (err = stderr.read.strip).present?
         raise Favicon::CurlError.new(err)
       end
@@ -79,14 +79,16 @@ module Favicon
       uri = URI @final_url
       root = "#{uri.scheme}://#{uri.host}"
       @candidate_urls.map! do |href|
-        href = URI.encode(href)
+        href = URI.encode(href.strip)
         if href.starts_with? "//"
           href = "#{uri.scheme}:#{href}"
         elsif href !~ /\Ahttp/
-          href = URI.join(root, href).to_s
+          # TODO handle invalid URLS
+          # ex. {http://i50.tinypic.com/wbuzcn.png}
+          href = URI.join(root, href).to_s rescue nil
         end
         href
-      end
+      end.compact
       @candidate_urls << URI.join(root, "favicon.ico").to_s
       @candidate_urls << URI.join(root, "favicon.png").to_s
     end
