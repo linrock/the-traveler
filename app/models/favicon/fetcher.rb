@@ -29,7 +29,7 @@ module Favicon
     end
 
     def http_get(url)
-      cmd = "curl -sL --compressed -3 --tlsv1.2 -m #{TIMEOUT} --fail --show-error #{url}"
+      cmd = "curl -sL --compressed -m #{TIMEOUT} --fail --show-error #{url}"
       stdin, stdout, stderr, t = Open3.popen3(cmd)
       @html = encode_utf8(stdout.read).strip
       if (err = stderr.read.strip).present?
