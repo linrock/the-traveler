@@ -3,14 +3,15 @@ class BeanstalkWatcher
   class Logger
 
     def initialize
-      @logfile = File.open(Rails.root.join("log/beanstalk.log"), "a+")
+      @log_file = File.open(Rails.root.join("log/beanstalk.log"), "a+")
+      # @error_file = File.open(Rails.root.join("log/beanstalk.log"), "a+")
     end
 
     def log(message)
       formatted = "[#{Time.now}] #{message}"
       puts formatted
-      @logfile.write formatted + "\n"
-      @logfile.flush
+      @log_file.write formatted + "\n"
+      @log_file.flush
     end
 
     def error(error, options = {})
@@ -37,7 +38,7 @@ class BeanstalkWatcher
     begin
       while (job = @tube.reserve)
         url = job.body
-        @logger.log "Checking url: #{url}"
+        @logger.log "Checking: #{url}"
         begin
           snapshot = FaviconSnapshot.find_or_init_with_query(url)
           snapshot.init_from_fetcher_results
