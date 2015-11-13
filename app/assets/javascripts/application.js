@@ -24,7 +24,7 @@ $(function() {
       if (fetchedIds[last_id]) {
         reject("Already fetched " + last_id);
       } else {
-        console.log("Fetching since " + last_id);
+        // console.log("Fetching since " + last_id);
         resolve(last_id);
       }
     });
@@ -50,11 +50,13 @@ $(function() {
   var appendFaviconsToList = function(favicons) {
     // console.log(favicons.length);
     var template = _.template(
-      '<img class="favicon" src="<%- favicon.favicon_data_uri %>"' +
-                           'title="<%- favicon.query_url %>">'
+      '<img class="favicon invisible delay-<%- favicon.anim_delay %>"' +
+           'src="<%- favicon.favicon_data_uri %>"' +
+           'title="<%- favicon.query_url %>">'
     );
     var html = '<div class="favicon-sheet invisible">';
     _.each(favicons, function(favicon) {
+      favicon.anim_delay = ~~ ( Math.random() * 10 );
       html += template({ favicon: favicon });
     });
     html += '</div>';
@@ -62,6 +64,9 @@ $(function() {
     $html.appendTo($(".favicons"));
     setTimeout(function() {
       $html.removeClass("invisible");
+      setTimeout(function() {
+        $html.find(".invisible").removeClass("invisible");
+      }, 50);
     }, 50);
     return favicons;
   };
@@ -87,7 +92,7 @@ $(function() {
       if (!shouldScroll() || loading) {
         return;
       }
-      console.log("should scroll");
+      // console.log("should scroll");
 
       loading = true;
 

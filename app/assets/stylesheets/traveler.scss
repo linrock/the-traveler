@@ -39,6 +39,19 @@ background: white;
 
 }
 
+.favicon {
+  transition: opacity 0.75s ease;
+
+  @for $i from 0 through 9 {
+
+    &.delay-#{$i} {
+      transition-delay: 0.2s * $i + 0.2s;
+    }
+
+  }
+
+}
+
 .messages {
   float: left;
   padding: 30px;

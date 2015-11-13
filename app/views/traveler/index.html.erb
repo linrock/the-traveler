@@ -2,10 +2,14 @@
 
   <div class="favicons">
 
-    <% @favicon_snapshots.each do |snapshot| %>
-      <img class="favicon" src="<%= snapshot.favicon_data_uri %>"
-                           title="<%= snapshot.query_url %>">
-    <% end %>
+    <div class="favicon-sheet">
+
+      <% @favicon_snapshots.each do |snapshot| %>
+        <img class="favicon" src="<%= snapshot.favicon_data_uri %>"
+                             title="<%= snapshot.query_url %>">
+      <% end %>
+
+    </div>
 
   </div>
 

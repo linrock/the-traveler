@@ -37,7 +37,7 @@ class FaviconSnapshot < ActiveRecord::Base
       if last_id.present?
         where("id < ?", last_id).order("id DESC").limit(700 / 2)
       else
-        order("id DESC").limit(700 * 2)
+        order("id DESC").limit(700)
       end
     end
 
