@@ -10,7 +10,7 @@ class FaviconsController < ApplicationController
     else
       # set_favicon_urls_from_cache
       # set_favicon_urls_from_unique_favicon_snapshots
-      set_favicon_urls_from_snapshots(params[:last_id])
+      @favicon_snapshots = FaviconSnapshot.get_recent(params[:last_id])
       if request.xhr?
         render :json => @favicon_snapshots.map {|snapshot|
           {
@@ -48,14 +48,6 @@ class FaviconsController < ApplicationController
     @favicon_urls = favicon_urls.map {|url|
       "http://localhost:8000/favicons?q=#{url}"
     }.take(160)
-  end
-
-  def set_favicon_urls_from_snapshots(last_id = nil)
-    if last_id.present?
-      @favicon_snapshots = FaviconSnapshot.where("id < ?", last_id).order("id DESC").limit(700 / 4)
-    else
-      @favicon_snapshots = FaviconSnapshot.order("id DESC").limit(700 * 2)
-    end
   end
 
   def set_favicon_urls_from_unique_favicon_snapshots

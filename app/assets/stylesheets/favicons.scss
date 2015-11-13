@@ -1,0 +1,35 @@
+body[data-controller="favicons"] {
+
+.container {
+  background: white;
+  width: 184 + 32px;
+  padding: 16px;
+  margin: 30px auto 50px;
+}
+
+.favicon {
+  float: left;
+  width: 16px;
+  height: 16px;
+  margin-right: 12px;
+  margin-bottom: 12px;
+
+  &:nth-child(7n) {
+    margin-right: 0;
+  }
+
+}
+
+.favicons-header {
+  margin: 30px 0;
+  font-size: 30px;
+  text-align: center;
+  -webkit-font-smoothing: antialiased;
+}
+
+.favicons {
+  margin: 5px 0 25px 0;
+  overflow: hidden;
+}
+
+}

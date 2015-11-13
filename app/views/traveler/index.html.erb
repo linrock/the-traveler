@@ -1,0 +1,29 @@
+<div class="container">
+
+  <div class="favicons">
+
+    <% @favicon_snapshots.each do |snapshot| %>
+      <img class="favicon" src="<%= snapshot.favicon_data_uri %>"
+                           title="<%= snapshot.query_url %>">
+    <% end %>
+
+  </div>
+
+  <div class="messages">
+
+    <div class="intro">
+      A robot travels the web <br>
+      This is what it finds along the way
+    </div>
+
+    <div class="stats">
+
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  Traveler.last_id = <%= @favicon_snapshots.last.id %>;
+</script>

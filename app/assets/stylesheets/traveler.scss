@@ -1,0 +1,55 @@
+body[data-controller="traveler"] {
+
+background: white;
+
+.invisible {
+  opacity: 0;
+}
+
+.container {
+  background: none;
+  margin: 50px auto 200px;
+  width: 640px;
+  padding: 0;
+  overflow: hidden;
+}
+
+.favicons {
+  float: left;
+  background: rgba(255,255,255,0.15);
+  width: 216px;
+  padding: 16px;
+  overflow: hidden;
+}
+
+.favicon-sheet {
+  transition: opacity 0.25s ease;
+}
+
+.favicon {
+  float: left;
+  width: 16px;
+  height: 16px;
+  margin-right: 12px;
+  margin-bottom: 12px;
+
+  &:nth-child(7n) {
+    margin-right: 0;
+  }
+
+}
+
+.messages {
+  float: left;
+  padding: 30px;
+  width: 640px - 216px;
+  color: #111;
+
+  .intro {
+    font-size: 26px;
+    line-height: 40px;
+  }
+
+}
+
+}
