@@ -9,8 +9,17 @@ class FaviconsController < ApplicationController
       @spritesheet.generate
     else
       # set_favicon_urls_from_cache
-      set_favicon_urls_from_snapshots
       # set_favicon_urls_from_unique_favicon_snapshots
+      set_favicon_urls_from_snapshots(params[:last_id])
+      if request.xhr?
+        render :json => @favicon_snapshots.map {|snapshot|
+          {
+            :id => snapshot.id.to_s,
+            :favicon_data_uri => snapshot.favicon_data_uri,
+            :query_url => snapshot.query_url
+          }
+        }.to_json
+      end
     end
   end
 
@@ -41,8 +50,12 @@ class FaviconsController < ApplicationController
     }.take(160)
   end
 
-  def set_favicon_urls_from_snapshots
-    @favicon_snapshots = FaviconSnapshot.order("id DESC").limit(798 * 2)
+  def set_favicon_urls_from_snapshots(last_id = nil)
+    if last_id.present?
+      @favicon_snapshots = FaviconSnapshot.where("id < ?", last_id).order("id DESC").limit(700 / 4)
+    else
+      @favicon_snapshots = FaviconSnapshot.order("id DESC").limit(700 * 2)
+    end
   end
 
   def set_favicon_urls_from_unique_favicon_snapshots

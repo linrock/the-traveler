@@ -49,4 +49,12 @@
 
   </div>
 
+  <% if @favicon_snapshots.present? %>
+
+    <script>
+      Traveler.last_id = <%= @favicon_snapshots.last.id %>;
+    </script>
+
+  <% end %>
+
 </div>
