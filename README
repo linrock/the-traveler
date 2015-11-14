@@ -5,3 +5,7 @@ Known issues:
   Favicon::CurlError: curl: (56) SSLRead() return error -9806
 * Handle invalid urls in element HREF
   * www.wetheurban.com - {http://i50.tinypic.com/wbuzcn.png}
+* Handle inaccessible DNS in fast succession
+  * Waking up from wifi sleep
+* Handle WEBP file format
+  * www.stereogum.com - {data:image/webp;base64, ... }
