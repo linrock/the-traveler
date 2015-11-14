@@ -96,7 +96,7 @@ $(function() {
 
     var periodicallyAddFaviconsFromQueue = function() {
       addFaviconFromQueue();
-      setTimeout(periodicallyAddFaviconsFromQueue, 1000);
+      setTimeout(periodicallyAddFaviconsFromQueue, ~~ (750 + Math.random() * 500));
     };
 
     pollForFavicons();

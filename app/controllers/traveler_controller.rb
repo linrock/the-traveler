@@ -1,6 +1,7 @@
 class TravelerController < ApplicationController
 
   def index
+    @traveler = Traveler.new
     @favicon_snapshots = FaviconSnapshot.get_recent_favicons
   end
 
