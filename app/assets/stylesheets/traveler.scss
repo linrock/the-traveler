@@ -8,7 +8,7 @@ background: white;
 
 .container {
   background: none;
-  margin: 50px auto 200px;
+  margin: 0 auto;
   width: 640px;
   padding: 0;
   overflow: hidden;
@@ -19,6 +19,7 @@ background: white;
   background: rgba(255,255,255,0.15);
   width: 216px;
   padding: 16px;
+  margin: 50px 0 800px;
   overflow: hidden;
 }
 

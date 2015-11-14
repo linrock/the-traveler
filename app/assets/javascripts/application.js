@@ -55,8 +55,9 @@ $(function() {
            'title="<%- favicon.query_url %>">'
     );
     var html = '<div class="favicon-sheet invisible">';
-    _.each(favicons, function(favicon) {
-      favicon.anim_delay = ~~ ( Math.random() * 10 );
+    var n = favicons.length;
+    _.each(favicons, function(favicon, j) {
+      favicon.anim_delay = ~~ ( Math.random() * j / n * 10);
       html += template({ favicon: favicon });
     });
     html += '</div>';
