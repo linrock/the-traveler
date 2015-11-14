@@ -34,10 +34,6 @@ background: white;
   margin-right: 12px;
   margin-bottom: 12px;
 
-  &:nth-child(7n) {
-    margin-right: 0;
-  }
-
 }
 
 .favicon {
@@ -53,8 +49,13 @@ background: white;
 
 }
 
+.favicon-row {
+  overflow: hidden;
+}
+
 .messages {
   float: left;
+  margin-top: 80px;
   padding: 30px;
   width: 640px - 216px;
   color: #111;
@@ -62,6 +63,10 @@ background: white;
   .intro {
     font-size: 26px;
     line-height: 40px;
+  }
+
+  .status {
+    margin-top: 40px;
   }
 
 }

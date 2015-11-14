@@ -74,6 +74,7 @@ class BeanstalkWatcher
     end
     return true if msg.include? "`XWD'" # TODO ignoring XWD file formats
     return true if msg.include? "identify: improper image header" # TODO
+    return true if msg.include? 'delegate failed `"dwebp"' # TODO
     false
   end
 

@@ -33,12 +33,16 @@ class FaviconSnapshot < ActiveRecord::Base
     end
     alias_method :lookup!, :find_or_fetch!
 
-    def get_recent(last_id = nil)
-      if last_id.present?
-        where("id < ?", last_id).order("id DESC").limit(700 / 2)
-      else
-        order("id DESC").limit(700)
-      end
+    def get_recent_favicons
+      order("id DESC").limit(700)
+    end
+
+    def get_favicons_before(id)
+      where("id < ?", id).order("id DESC").limit(175)
+    end
+
+    def get_favicons_after(id)
+      where("id > ?", id).order("id DESC").limit(175)
     end
 
   end
