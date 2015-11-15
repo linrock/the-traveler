@@ -49,7 +49,7 @@ class Traveler
           unless @error_handler.should_ignore?
             set_status "paused"
             binding.pry
-            @tube.put url, :pri => 0
+            @tube.put url, :pri => 1
           end
         ensure
           snapshot = nil

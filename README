@@ -31,3 +31,9 @@ Known issues:
   * Allowing 3DES as the cipher fixes this problem
   * curl -sL -k --compressed -m 5 --cipher 'RC4,3DES,ALL' --fail --show-error www.spj.org
 
+* www.hardrockhotelcasinotampa.com
+  * Has a favicon, but it wasn't fetched (https redirect to another domain)
+
+* sso.rumba.pearsoncmg.com
+  * curl: (56) SSL read: error:00000000:lib(0):func(0):reason(0), errno 54
+

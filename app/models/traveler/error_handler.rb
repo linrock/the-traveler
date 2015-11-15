@@ -1,37 +1,48 @@
 class Traveler::ErrorHandler
 
+  IGNORED_ERRORS = {
+
+    Favicon::NotFound         => [""],
+    Favicon::CurlError        => [""],
+    Favicon::Curl::DNSError   => [""],
+
+    Favicon::Curl::SSLError   =>
+      [
+        "alert handshake failure",
+        "unable to get local issuer certificate",
+        "SSL read: error:00000000"
+      ],
+
+    Favicon::ImageMagickError =>
+      [
+        "`XWD'",                           # TODO ignoring XWD file formats
+        "identify: improper image header", # TODO
+        'delegate failed `"dwebp"'         # TODO
+      ]
+
+  }
+
   def initialize(error)
     @error = error
-    @class = error.class.to_s
+    @class = error.class
     @message = error.message
   end
 
   def show_backtrace?
-    return true unless @class == "Favicon::NotFound"
+    return true unless @class == Favicon::NotFound
   end
 
   # ie. delays on DNS resolution errors to prevent huge sets of domains being
   # skipped upon laptop wakeup
   #
   def should_delay?
-    return false unless @class == "Favicon::CurlError"
-    return true if @message.include? "Couldn't resolve host"
+    @class == Favicon::Curl::DNSError
   end
 
   def should_ignore?
-    return true if @class == "Favicon::NotFound"
-    if @class == "Favicon::CurlError"
-      return true if @message.include? "alert handshake failure"
-      return true if @message.include? "unable to get local issuer certificate"
-      return false if @message.include? "SSL"
-      return true
-    end
-    if @class == "Favicon::ImageMagickError"
-      return true if @message.include? "`XWD'" # TODO ignoring XWD file formats
-      return true if @message.include? "identify: improper image header" # TODO
-      return true if @message.include? 'delegate failed `"dwebp"' # TODO
-    end
-    false
+    ignored = IGNORED_ERRORS[@class]
+    return false unless ignored.present?
+    ignored.any? {|text| @message.include? text }
   end
 
 end

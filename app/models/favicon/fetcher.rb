@@ -17,7 +17,7 @@ module Favicon
                        'link[rel="apple-touch-icon"]'
                      ]
 
-    attr_accessor :query_url, :final_url, :favicon_url, :candidate_urls, :html, :raw_data
+    attr_accessor :query_url, :final_url, :favicon_url, :candidate_urls, :html, :data
 
     def initialize(url)
       @query_url = normalize_url(url)
@@ -25,7 +25,7 @@ module Favicon
       @favicon_url = nil
       @html = nil
       @candidate_urls = []
-      @raw_data = nil
+      @data = nil
     end
 
     def curl_cmd(url)
@@ -36,7 +36,13 @@ module Favicon
       stdin, stdout, stderr, t = Open3.popen3(curl_cmd(url))
       @html = encode_utf8(stdout.read).strip
       if (err = stderr.read.strip).present?
-        raise Favicon::CurlError.new(err)
+        if err.include? "SSL"
+          raise Favicon::Curl::SSLError.new(err)
+        elsif err.include? "Couldn't resolve host"
+          raise Favicon::Curl::DNSError.new(err)
+        else
+          raise Favicon::CurlError.new(err)
+        end
       end
     end
 
@@ -48,10 +54,10 @@ module Favicon
     end
 
     def get_favicon
-      return @raw_data if @raw_data.present?
-      @raw_data = get_favicon_data_from_candidate_urls
-      raise Favicon::NotFound.new(@query_url) unless @raw_data
-      @raw_data
+      return @data if @data.present?
+      @data = get_favicon_data_from_candidate_urls
+      raise Favicon::NotFound.new(@query_url) unless @data
+      @data
     end
 
     def get_favicon_data_from_candidate_urls
