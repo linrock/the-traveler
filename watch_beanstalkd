@@ -1,3 +1,3 @@
 #!/bin/bash
 
-rails runner "BeanstalkWatcher.new.run"
+rails runner "Traveler.new.run"
