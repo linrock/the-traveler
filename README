@@ -1,11 +1,33 @@
 Known issues:
 
 * Can't handle XWD file format on OSX (https://instacastcloud.com)
+
 * Failed to fetch for antitheft.norton.com
   Favicon::CurlError: curl: (56) SSLRead() return error -9806
+
 * Handle invalid urls in element HREF
   * www.wetheurban.com - {http://i50.tinypic.com/wbuzcn.png}
+
 * Handle inaccessible DNS in fast succession
   * Waking up from wifi sleep
+
 * Handle WEBP file format
   * www.stereogum.com - {data:image/webp;base64, ... }
+
+* www.vietabank.com.vn
+  * curl -sL --compressed -m 5 --fail --show-error www.vietabank.com.vn
+  * error:14077410:SSL routines:SSL23_GET_SERVER_HELLO:sslv3 alert handshake failure
+
+* www.amsl.com
+  * Favicon::CurlError: curl: (60) SSL certificate problem: unable to get local issuer certificate
+
+* payloadz.com
+  * curl: (35) Unknown SSL protocol error in connection to www.payloadz.com:443
+  * Using RC4-SHA as the cipher fixes this problem
+  * curl -sL -k --compressed -m 5 --cipher 'RC4-SHA,ALL' --fail --show-error www.payloadz.com
+
+* www.spj.org
+  * curl: (35) Unknown SSL protocol error in connection to www.spj.org:443
+  * Allowing 3DES as the cipher fixes this problem
+  * curl -sL -k --compressed -m 5 --cipher 'RC4,3DES,ALL' --fail --show-error www.spj.org
+

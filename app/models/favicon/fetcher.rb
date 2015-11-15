@@ -29,7 +29,7 @@ module Favicon
     end
 
     def curl_cmd(url)
-      "curl -sL -k --compressed -m #{TIMEOUT} --fail --show-error #{url}"
+      "curl -sL -k --compressed -m #{TIMEOUT} --ciphers 'RC4,3DES,ALL' --fail --show-error #{url}"
     end
 
     def http_get(url)
