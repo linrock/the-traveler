@@ -28,9 +28,12 @@ module Favicon
       @raw_data = nil
     end
 
+    def curl_cmd(url)
+      "curl -sL -k --compressed -m #{TIMEOUT} --fail --show-error #{url}"
+    end
+
     def http_get(url)
-      cmd = "curl -sL --compressed -m #{TIMEOUT} --fail --show-error #{url}"
-      stdin, stdout, stderr, t = Open3.popen3(cmd)
+      stdin, stdout, stderr, t = Open3.popen3(curl_cmd(url))
       @html = encode_utf8(stdout.read).strip
       if (err = stderr.read.strip).present?
         raise Favicon::CurlError.new(err)
@@ -97,7 +100,7 @@ module Favicon
     #
     def get_final_url
       output = `curl -sIL -1 -m #{TIMEOUT} "#{@query_url}"`
-      final = output.scan(/Location: (.*)/)[-1]
+      final = output.scan(/\ALocation: (.*)/)[-1]
       final_url = final && final[0].strip
       if final_url.present?
         if final_url.starts_with? "http"
@@ -114,7 +117,7 @@ module Favicon
 
     def get_favicon_data(url)
       return Base64.decode64(url.split(',')[1]) if url =~ /^data:/
-      `curl -sL --compressed -m #{TIMEOUT} "#{url}"`
+      `#{curl_cmd(url)}`
     end
 
     def get_urls
