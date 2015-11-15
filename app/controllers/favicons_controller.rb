@@ -10,7 +10,7 @@ class FaviconsController < ApplicationController
     else
       # set_favicon_urls_from_cache
       # set_favicon_urls_from_unique_favicon_snapshots
-      @favicon_snapshots = FaviconSnapshot.get_recent(params[:last_id])
+      @favicon_snapshots = FaviconSnapshot.get_recent_favicons
       if request.xhr?
         render :json => @favicon_snapshots.map {|snapshot|
           {

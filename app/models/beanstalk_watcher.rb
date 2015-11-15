@@ -25,6 +25,7 @@ class BeanstalkWatcher
 
   def initialize
     @logger = Logger.new
+    @traveler = Traveler.new
     @beanstalk = Beaneater.new(['localhost:11300'])
     @tube = @beanstalk.tubes["favicon_urls"]
   end
@@ -35,6 +36,7 @@ class BeanstalkWatcher
 
   def run
     @logger.log "Watching for urls in Beanstalkd queue"
+    @traveler.set_status "active"
     begin
       while (job = @tube.reserve)
         url = job.body
@@ -45,8 +47,10 @@ class BeanstalkWatcher
           snapshot.save!
         rescue => error
           @logger.log "Failed to fetch for #{url}"
-          @logger.error error, :backtrace => should_show_backtrace?(error)
+          @logger.error error, :backtrace => show_backtrace?(error)
+          sleep(5) if should_delay?(error)
           unless should_ignore?(error)
+            @traveler.set_status "paused"
             binding.pry
             @tube.put url, :pri => 0
           end
@@ -56,12 +60,21 @@ class BeanstalkWatcher
         job.delete
       end
     ensure
+      @traveler.set_status "resting"
       @beanstalk.close
     end
   end
 
-  def should_show_backtrace?(error)
+  def show_backtrace?(error)
     return true unless error.class.to_s == "Favicon::NotFound"
+  end
+
+  # TODO delay on DNS resolution errors to prevent huge sets of domains being
+  # skipped upon laptop wakeup
+  #
+  def should_delay?(error)
+    return false unless error.class.to_s == "Favicon::CurlError"
+    return true if error.message.include? "Couldn't resolve host"
   end
 
   def should_ignore?(error)
@@ -69,12 +82,16 @@ class BeanstalkWatcher
     msg = error.message
     return true if klass == "Favicon::NotFound"
     if klass == "Favicon::CurlError"
+      return true if msg.include? "alert handshake failure"
+      return true if msg.include? "unable to get local issuer certificate"
       return false if msg.include? "SSL"
       return true
     end
-    return true if msg.include? "`XWD'" # TODO ignoring XWD file formats
-    return true if msg.include? "identify: improper image header" # TODO
-    return true if msg.include? 'delegate failed `"dwebp"' # TODO
+    if klass == "Favicon::ImageMagickError"
+      return true if msg.include? "`XWD'" # TODO ignoring XWD file formats
+      return true if msg.include? "identify: improper image header" # TODO
+      return true if msg.include? 'delegate failed `"dwebp"' # TODO
+    end
     false
   end
 

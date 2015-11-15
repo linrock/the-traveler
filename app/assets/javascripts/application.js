@@ -40,12 +40,16 @@ $(function() {
           url: "/traveler/favicons?after_id=" + first_id,
           dataType: "json",
           success: function(data, status, xhr) {
-            if (data.length > 0) {
-              next_id = _.first(data).id;
-              window.favicons = data;
+            var favicons = data.favicons;
+
+            // TODO update traveler status elsewhere
+            $(".s").text(data.traveler.status);
+
+            if (favicons.length > 0) {
+              next_id = _.first(favicons).id;
+              last_checked_id = first_id;
             }
-            last_checked_id = first_id;
-            resolve(data);
+            resolve(favicons);
           },
           error: function(xhr, status, error) {
             reject(error);
@@ -90,13 +94,17 @@ $(function() {
         .then(queueRecentFavicons)
         .catch(function(error) {
           console.log("Favicon polling error: " + error);
+          return true;
+        })
+        .then(function() {
+          setTimeout(pollForFavicons, 5000);
         });
-      setTimeout(pollForFavicons, 5000);
     };
 
     var periodicallyAddFaviconsFromQueue = function() {
+      var delay = ~~ (750 + Math.random() * 500);
       addFaviconFromQueue();
-      setTimeout(periodicallyAddFaviconsFromQueue, ~~ (750 + Math.random() * 500));
+      setTimeout(periodicallyAddFaviconsFromQueue, delay);
     };
 
     pollForFavicons();
