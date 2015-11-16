@@ -39,5 +39,11 @@ Known issues:
 
 
 * Handle empty favicons
-  * http://peacenow.org.il - all white
-  * http://realclimate.org - saved as transparent, but should not be
+  * http://peacenow.org.il   - all white
+  * http://realclimate.org   - saved as transparent, but should not be
+  * http://faultline.org     - should have a favicon
+
+* Don't save transparent favicons
+  * http://www.populist.com  - transparent favicon
+  * http://allspinzone.com   - transparent favicon
+

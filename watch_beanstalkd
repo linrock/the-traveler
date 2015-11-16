@@ -1,3 +1,0 @@
-#!/bin/bash
-
-rails runner "Traveler.new.run"

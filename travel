@@ -1,0 +1,3 @@
+#!/bin/bash
+
+bundle exec rails runner "Traveler.new.run"
