@@ -106,7 +106,7 @@ module Favicon
     #
     def get_final_url
       output = `curl -sIL -1 -m #{TIMEOUT} "#{@query_url}"`
-      final = output.scan(/\ALocation: (.*)/)[-1]
+      final = encode_utf8(output).scan(/\ALocation: (.*)/)[-1]
       final_url = final && final[0].strip
       if final_url.present?
         if final_url.starts_with? "http"

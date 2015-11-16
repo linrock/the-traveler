@@ -14,7 +14,7 @@ class Traveler::Logger
 
   def error(error, options = {})
     message = "#{error.class}: #{error.message}\n"
-    message = message + error.backtrace.join("\n") if options[:backtrace]
+    message = message + error.backtrace.join("\n") if options[:log_backtrace]
     log message
   end
 
