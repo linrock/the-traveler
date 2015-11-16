@@ -19,6 +19,8 @@ $(function() {
 
   var RecentFaviconFetcher = function() {
 
+    const N_COLS = 5;
+
     var next_id = Traveler.first_id;
     var last_checked_id = false;
     var favicon_queue = [];
@@ -77,9 +79,10 @@ $(function() {
       }
       var html = template({ favicon: favicon });
       var $row = $(".favicons .favicon-row").first();
-      if ($row.length == 0 || $row.find(".favicon").length == 6) {
+      if ($row.length == 0 || $row.find(".favicon").length == N_COLS) {
         $row = $('<div class="favicon-row">');
         $(".favicons").prepend($row);
+        $(".favicons .favicon-row").last().remove();
       }
       var $html = $(html);
       $html.appendTo($row);

@@ -1,15 +1,20 @@
 body[data-controller="traveler"] {
 
-background: white;
 
-.invisible {
-  opacity: 0;
-}
+$n-cols: 5;
+$f-margin: 14px;
+
+$container-width: 640px;
+$left-width: $n-cols * (16px + $f-margin);
+$right-width: $container-width - $left-width;
+
+
+background: white;
 
 .container {
   background: none;
   margin: 0 auto;
-  width: 640px;
+  width: $container-width;
   padding: 0;
   overflow: hidden;
 }
@@ -17,9 +22,8 @@ background: white;
 .favicons {
   float: left;
   background: rgba(255,255,255,0.15);
-  width: 216px;
-  padding: 16px;
-  margin: 50px 0 800px;
+  width: $left-width;
+  margin: 75px 0 800px;
   overflow: hidden;
 }
 
@@ -31,13 +35,18 @@ background: white;
   float: left;
   width: 16px;
   height: 16px;
-  margin-right: 12px;
-  margin-bottom: 12px;
-
+  margin-right: $f-margin;
+  margin-bottom: $f-margin;
 }
 
 .favicon {
-  transition: opacity 0.75s ease;
+  transition: opacity 0.75s ease, transform 0.3s ease;
+  transform: scale3d(1,1,1);
+
+  &.invisible {
+    opacity: 0;
+    transform: scale3d(0.1,0.1,1);
+  }
 
   @for $i from 0 through 9 {
 
@@ -53,11 +62,32 @@ background: white;
   overflow: hidden;
 }
 
+.favicon-trail {
+
+  .favicon-ghost {
+    background: #F7F7F7;
+
+    &.lighter {
+      background: #FDFDFD;
+    }
+
+    &.darker {
+      background: #E9E9E9;
+    }
+
+    &.clear {
+      background: transparent;
+    }
+
+  }
+
+}
+
 .messages {
   float: left;
-  margin-top: 80px;
-  padding: 30px;
-  width: 640px - 216px;
+  margin-top: 75px;
+  padding: 0 60px;
+  width: $right-width;
   color: #111;
 
   .intro {

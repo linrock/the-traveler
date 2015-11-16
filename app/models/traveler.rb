@@ -55,6 +55,14 @@ class Traveler
     @tube.put url, :pri => priority
   end
 
+  def handle_errored_url(url)
+    set_status "paused"
+    state = export_state({ :fetcher => snapshot.fetcher, :error => error })
+    write_state_as_fixture(state)
+    binding.pry
+    add_url url, 1
+  end
+
   def run
     @logger.log "Watching for urls in Beanstalkd queue"
     set_status "active"
@@ -71,13 +79,7 @@ class Traveler
           @logger.log "Failed to fetch for #{url}"
           @logger.error error, :backtrace => @error_handler.show_backtrace?
           sleep(5) if @error_handler.should_delay?
-          unless @error_handler.should_ignore?
-            set_status "paused"
-            state = export_state({ :fetcher => snapshot.fetcher, :error => error })
-            write_state_as_fixture(state)
-            binding.pry
-            @tube.put url, :pri => 1
-          end
+          handle_errored_url(url) unless @error_handler.should_ignore?
         ensure
           snapshot = nil
         end
