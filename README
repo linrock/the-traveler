@@ -37,3 +37,7 @@ Known issues:
 * sso.rumba.pearsoncmg.com
   * curl: (56) SSL read: error:00000000:lib(0):func(0):reason(0), errno 54
 
+
+* Handle empty favicons
+  * http://peacenow.org.il - all white
+  * http://realclimate.org - saved as transparent, but should not be
