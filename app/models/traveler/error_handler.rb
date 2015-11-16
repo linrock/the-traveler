@@ -8,21 +8,20 @@ class Traveler::ErrorHandler
 
   IGNORED_ERROR_STRINGS = {
 
-    Favicon::Curl::SSLError   =>
-      [
-        "alert handshake failure",
-        "unable to get local issuer certificate",
-        "SSL read: error:00000000"
-      ],
+    Favicon::Curl::SSLError   => [
+      "alert handshake failure",
+      "unable to get local issuer certificate",
+      "SSL read: error:00000000"
+    ],
 
-    Favicon::ImageMagickError =>
-      [
-        "`XWD'",                           # TODO ignoring XWD file formats
-        "identify: improper image header", # TODO
-        'delegate failed `"dwebp"',        # TODO
-        "insufficient image data",         # query_url: advantage.asus.com
-        "unexpected end-of-file"
-      ]
+    Favicon::ImageMagickError => [
+      "`XWD'",                           # TODO ignoring XWD file formats
+      "identify: improper image header", # TODO
+      'delegate failed `"dwebp"',        # TODO
+      "insufficient image data",         # query_url: advantage.asus.com
+      "unexpected end-of-file",
+      "Expected 8 bytes; found 0 bytes"  # query_url: www.mytreesunshinecoast.com
+    ]
 
   }
 
@@ -33,7 +32,7 @@ class Traveler::ErrorHandler
   end
 
   def show_backtrace?
-    return true unless @class == Favicon::NotFound
+    return true unless [ Favicon::NotFound, Favicon::CurlError ].include? @class
   end
 
   # ie. delays on DNS resolution errors to prevent huge sets of domains being
