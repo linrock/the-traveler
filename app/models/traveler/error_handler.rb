@@ -1,10 +1,12 @@
 class Traveler::ErrorHandler
 
-  IGNORED_ERRORS = {
+  IGNORED_ERRORS = [
+    Favicon::NotFound,
+    Favicon::CurlError,
+    Favicon::Curl::DNSError
+  ]
 
-    Favicon::NotFound         => [""],
-    Favicon::CurlError        => [""],
-    Favicon::Curl::DNSError   => [""],
+  IGNORED_ERROR_STRINGS = {
 
     Favicon::Curl::SSLError   =>
       [
@@ -41,9 +43,10 @@ class Traveler::ErrorHandler
   end
 
   def should_ignore?
-    ignored = IGNORED_ERRORS[@class]
-    return false unless ignored.present?
-    ignored.any? {|text| @message.include? text }
+    return true if IGNORED_ERRORS.include? @class
+    ignored_strs = IGNORED_ERROR_STRINGS[@class]
+    return false unless ignored_strs.present?
+    ignored_strs.any? {|str| @message.include? str }
   end
 
 end

@@ -1,9 +1,11 @@
 module Favicon
 
-  module Curl; end
   class CurlError < StandardError; end
-  class Curl::DNSError < CurlError; end
-  class Curl::SSLError < CurlError; end
+
+  module Curl
+    class DNSError < CurlError; end
+    class SSLError < CurlError; end
+  end
 
   class NotFound < StandardError; end
   class ImageMagickError < StandardError; end
