@@ -20,7 +20,8 @@ class Traveler::ErrorHandler
         "`XWD'",                           # TODO ignoring XWD file formats
         "identify: improper image header", # TODO
         'delegate failed `"dwebp"',        # TODO
-        "insufficient image data"          # query_url: advantage.asus.com
+        "insufficient image data",         # query_url: advantage.asus.com
+        "unexpected end-of-file"
       ]
 
   }

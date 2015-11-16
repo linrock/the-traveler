@@ -26,6 +26,31 @@ class Traveler
     "resting"
   end
 
+  def export_state(options = {})
+    state = {}
+    if (fetcher = options[:fetcher]).present?
+      state.merge! fetcher.get_urls
+      if fetcher.has_data?
+        state[:base64_favicon_data] = fetcher.data.base64_raw_data
+      end
+    end
+    if (error = options[:error]).present?
+      state.merge!({
+        :error_class   => error.class,
+        :error_message => error.message
+      })
+    end
+    state
+  end
+
+  def write_state_as_fixture(state)
+    host = URI(state[:query_url]).host
+    file_path = Rails.root.join("test/fixtures/#{host}.json")
+    open(file_path, "w+") do |f|
+      f.write state.to_json
+    end
+  end
+
   def add_url(url, priority = 10)
     @tube.put url, :pri => priority
   end
@@ -48,6 +73,8 @@ class Traveler
           sleep(5) if @error_handler.should_delay?
           unless @error_handler.should_ignore?
             set_status "paused"
+            state = export_state({ :fetcher => snapshot.fetcher, :error => error })
+            write_state_as_fixture(state)
             binding.pry
             @tube.put url, :pri => 1
           end

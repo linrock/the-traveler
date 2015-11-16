@@ -117,7 +117,13 @@ module Favicon
           @final_url = URI.encode URI.join(root, final_url).to_s
         end
       end
-      return @final_url if @final_url.present?
+      if @final_url.present?
+        if %w( 127.0.0.1 localhost ).any? {|host| @final_url.include? host }
+          # TODO Exception for invalid final urls
+          @final_url = @query_url
+        end
+        return @final_url
+      end
       @final_url = @query_url
     end
 
@@ -132,6 +138,10 @@ module Favicon
         :final_url    => @final_url,
         :favicon_url  => @favicon_url
       }
+    end
+
+    def has_data?
+      @data.present? && @data.data.present?
     end
 
     private
