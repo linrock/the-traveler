@@ -70,6 +70,10 @@ module Favicon
       end
     end
 
+    def base64_raw_data
+      Base64.encode64(@data).split(/\s+/).join
+    end
+
     def base64_png
       Base64.encode64(to_png).split(/\s+/).join
     end
