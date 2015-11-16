@@ -71,14 +71,28 @@ background: white;
 
 }
 
+
+@keyframes twinkle {
+  0%   { opacity: 0.5; }
+  100% { opacity: 0.8; }
+}
+
 .favicon-fader {
   height: 0;
+  opacity: 0.5;
   position: relative;
   top: -( 16px + $f-margin );
 
+  &.twinkling {
+    animation-duration: 4s;
+    animation-direction: alternate;
+    animation-iteration-count: infinite;
+    animation-name: twinkle;
+  }
+
   .favicon-fade {
     position: absolute;
-    background: rgba(255,255,255,0.8);
+    background: white;
 
     &.row {
       width: 100%;
