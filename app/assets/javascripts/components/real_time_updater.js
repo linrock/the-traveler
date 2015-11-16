@@ -53,22 +53,43 @@ Components.RealTimeUpdater = function() {
          'title="<%- favicon.query_url %>">'
   );
 
+  var faviconRowHandler = (function() {
+    var polarity = 'right';
+
+    var $createRow = function() {
+      if (polarity == 'left') {
+        polarity = 'right';
+      } else {
+        polarity = 'left';
+      };
+      return $('<div>').addClass("favicon-row " + polarity);
+    };
+
+    var $topRow = function() {
+      var $row = $(".favicons .favicon-row").first();
+      if ($row.length == 0 || $row.find(".favicon").length == N_COLS) {
+        $row = $createRow();
+        $(".favicons .favicon-sheet").prepend($row);
+        $(".favicons .favicon-row").last().remove();
+      }
+      return $row;
+    };
+
+    return {
+      $topRow: $topRow
+    };
+
+  })();
+
   var addFaviconFromQueue = function() {
     var favicon = favicon_queue.shift();
     if (!favicon) {
       return;
     }
-    var html = template({ favicon: favicon });
-    var $row = $(".favicons .favicon-row").first();
-    if ($row.length == 0 || $row.find(".favicon").length == N_COLS) {
-      $row = $('<div class="favicon-row">');
-      $(".favicons .favicon-sheet").prepend($row);
-      $(".favicons .favicon-row").last().remove();
-    }
-    var $html = $(html);
-    $html.appendTo($row);
+    var $favicon = $(template({ favicon: favicon }));
+    $favicon.appendTo(faviconRowHandler.$topRow());
     setTimeout(function() {
-      $html.removeClass("invisible");
+      $favicon.removeClass("invisible");
     }, 50);
   };
 

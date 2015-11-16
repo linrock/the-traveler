@@ -60,6 +60,15 @@ background: white;
 
 .favicon-row {
   overflow: hidden;
+
+  &.left .favicon {
+    float: left;
+  }
+
+  &.right .favicon {
+    float: right;
+  }
+
 }
 
 .favicon-fader {
