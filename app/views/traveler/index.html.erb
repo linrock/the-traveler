@@ -1,49 +1,54 @@
 <div class="container">
 
-  <div class="favicons">
+  <div class="the-trail">
 
-    <div class="favicon-sheet">
+    <img src="/assets/the-traveler.gif"
+         class="the-traveler">
 
-      <% @favicon_snapshots.each_slice(5).to_a.each do |row| %>
+    <div class="favicons">
 
-        <div class="favicon-row">
+      <div class="favicon-sheet">
 
-          <% row.each do |snapshot| %>
-            <img class="favicon"
-                 src="<%= snapshot.favicon_data_uri %>"
-                 title="<%= snapshot.query_url %>">
-          <% end %>
+        <% @favicon_snapshots.each_slice(5).to_a.each do |row| %>
 
-        </div>
+          <div class="favicon-row">
 
-      <% end %>
+            <% row.each do |snapshot| %>
+              <img class="favicon"
+                   src="<%= snapshot.favicon_data_uri %>"
+                   title="<%= snapshot.query_url %>">
+            <% end %>
 
-    </div>
+          </div>
 
-    <div class="favicon-fader">
+        <% end %>
 
-      <div class="favicon favicon-fade left top"></div>
-      <div class="favicon favicon-fade right top"></div>
-      <div class="favicon-fade entrance"></div>
-      <div class="favicon-fade block"></div>
-      <div class="favicon favicon-fade left bottom"></div>
-      <div class="favicon favicon-fade right bottom"></div>
+      </div>
 
-    </div>
+      <div class="favicon-fader">
 
-    <div class="favicon-trail">
+        <div class="favicon-fade entrance"></div>
+        <div class="favicon-fade block"></div>
+        <div class="favicon-fade rect left bottom"></div>
+        <div class="favicon-fade rect right bottom"></div>
 
-      <div class="favicon favicon-ghost lighter"></div>
-      <div class="favicon favicon-ghost"></div>
-      <div class="favicon favicon-ghost"></div>
-      <div class="favicon favicon-ghost lighter"></div>
-      <div class="favicon favicon-ghost lighter"></div>
+      </div>
+
+      <div class="favicon-trail">
+
+        <div class="favicon favicon-ghost lighter"></div>
+        <div class="favicon favicon-ghost"></div>
+        <div class="favicon favicon-ghost"></div>
+        <div class="favicon favicon-ghost lighter"></div>
+        <div class="favicon favicon-ghost lighter"></div>
+
+      </div>
 
     </div>
 
   </div>
 
-  <div class="messages">
+  <div class="description">
 
     <h1 class="title">
       The Traveler
@@ -52,7 +57,7 @@
     </h1>
 
     <div class="intro">
-      wanders the web <br>
+      wanders the web forever <br>
       and leaves a trail of <br>
       places it's been
     </div>

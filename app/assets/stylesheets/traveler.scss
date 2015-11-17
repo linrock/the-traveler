@@ -2,10 +2,11 @@ body[data-controller="traveler"] {
 
 
 $n-cols: 5;
+$f-size: 16px;
 $f-margin: 14px;
 
 $container-width: 640px;
-$left-width: $n-cols * (16px + $f-margin);
+$left-width: $n-cols * ($f-size + $f-margin);
 $right-width: $container-width - $left-width;
 
 
@@ -19,12 +20,22 @@ background: white;
   overflow: hidden;
 }
 
-.favicons {
+.the-trail {
   float: left;
-  background: rgba(255,255,255,0.15);
   width: $left-width;
   margin: 75px 0;
   overflow: hidden;
+}
+
+.the-traveler {
+  width: 12px;
+  position: relative;
+  left: 2px;
+  bottom: 1px;
+  transition: transform 0.2s ease;
+}
+
+.favicons {
   position: relative;
 }
 
@@ -49,8 +60,8 @@ background: white;
 
 .favicon {
   float: left;
-  width: 16px;
-  height: 16px;
+  width: $f-size;
+  height: $f-size;
   margin-right: $f-margin;
   margin-bottom: $f-margin;
 }
@@ -99,12 +110,18 @@ background: white;
   height: 0;
   pointer-events: none;
   position: relative;
-  top: -( 16px + $f-margin );
+  top: -( $f-size + $f-margin );
   z-index: 10;
 
   .favicon-fade {
     position: absolute;
-    background: rgba(255,255,255,0.5);
+    // background: rgba(255,255,255,0.5);
+    background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,0.5));
+
+    &.rect {
+      width: $f-size;
+      height: $f-size + $f-margin;
+    }
 
     &.entrance {
       width: 100%;
@@ -115,7 +132,7 @@ background: white;
 
     &.block {
       width: 100%;
-      height: 120px;
+      height: 120px + $f-margin;
       top: -90px;
       background: linear-gradient(to top, rgba(255,255,255,0.99), rgba(255,255,255,0.5));
     }
@@ -129,7 +146,7 @@ background: white;
     }
 
     &.top {
-      top: -120px;
+      top: -120px - $f-margin;
     }
 
     &.bottom {
@@ -165,7 +182,7 @@ background: white;
 
 // Right column with text/status/etc.
 
-.messages {
+.description {
   float: left;
   margin-top: 75px;
   padding: 0 60px;

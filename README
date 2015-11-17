@@ -52,6 +52,7 @@ Known issues:
   * http://www.mcfreedom.com       - redirects to hugedomains.com, but saved as white
   * http://faultline.org           - should have a favicon, but given a perceptually gray one
   * http://www.smartnewmedia.net   - should have a favicon
+  * http://www.gfang.cn            - has favicon, but saved as white/blank
 
 * Don't save transparent favicons
   * http://allspinzone.com         - transparent favicon
