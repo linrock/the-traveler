@@ -53,16 +53,17 @@ Known issues:
   * http://faultline.org           - should have a favicon
 
 * Don't save transparent favicons
-  * http://www.populist.com        - transparent favicon
   * http://allspinzone.com         - transparent favicon
   * http://www.debtdeflation.com   - transparent favicon
 
 * Don't save 1x1 favicons
+  * http://www.populist.com        - 1x1 favicon.ico
   * http://defendyourhealthcare.us - 1x1 favicon.ico
   * http://dirhost.com             - 1x1 favicon.ico
   * http://objectivistanswers.com  - 1x1 favicon.ico
   * http://www.familysecuritymatters.org - 1x1 favicon.ico
   * http://www.climatescienceinternational.org - 1x1 favicon.ico
+  * http://nextrestaurant.com - 1x1 favicon.ico
 
 * Don't save white favicons
   * http://www.shepherdspi.com     - 16x16 white favicon.ico

@@ -54,8 +54,8 @@ module Favicon
 
     # Does the data look like a valid favicon?
     def valid?
-      return false if blank?
-      mime_type !~ /(text|html|xml|x-empty)/
+      return false if mime_type =~ /(text|html|xml|x-empty)/
+      !blank?
     end
 
     # data size is invalid or 1x1 file sizes
