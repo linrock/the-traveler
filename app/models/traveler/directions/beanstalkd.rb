@@ -12,6 +12,7 @@ class Traveler::Directions::Beanstalkd
   end
 
   def follow
+    @logger.log "Following urls in Beanstalkd tube - #{@tube.name}"
     @traveler.set_status "active"
     begin
       while (job = @tube.reserve)

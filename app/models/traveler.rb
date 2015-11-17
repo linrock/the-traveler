@@ -52,14 +52,9 @@ class Traveler
     end
   end
 
-  def add_url(url, priority = 10)
-    @tube.put url, :pri => priority
-  end
-
   def run(source = :beanstalkd)
     if source == :beanstalkd
       @directions = Directions::Beanstalkd.new(self)
-      @logger.log "Watching for urls in Beanstalkd queue"
       @directions.follow
     end
   end
