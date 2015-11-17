@@ -128,7 +128,10 @@ module Favicon
     end
 
     def get_favicon_data(url)
-      return Base64.decode64(url.split(',')[1]) if url =~ /^data:/
+      if url =~ /^data:/
+        data = url.split(',')[1]
+        return data && Base64.decode64(data)
+      end
       `#{curl_cmd(url)}`
     end
 
