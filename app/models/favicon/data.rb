@@ -84,9 +84,9 @@ module Favicon
           end
         end
         cmd = "convert -strip -resize 16x16! #{files.uniq[0] || "#{t.path.to_s}[0]"} png:fd:1"
-        data = self.class.run_imagemagick_cmd(cmd, true)
-        raise Favicon::InvalidData.new("Empty png") if data.empty?
-        data
+        png_data = self.class.run_imagemagick_cmd(cmd, true)
+        raise Favicon::InvalidData.new("Empty png") if png_data.empty?
+        png_data
       end
     end
 
