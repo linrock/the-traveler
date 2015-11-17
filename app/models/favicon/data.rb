@@ -7,7 +7,12 @@ module Favicon
   #
   class Data
 
-    attr_accessor :data
+    # Threshold for stdev of color values under which the image data
+    # is considered one color
+    #
+    STDEV_THRESHOLD = 0.005
+
+    attr_accessor :data, :png_data
 
     def initialize(data)
       @data = data
@@ -32,7 +37,7 @@ module Favicon
       end
     end
 
-    def self.run_imagemagick_cmd(cmd, binmode = false)
+    def imagemagick_run(cmd, binmode = false)
       stdin, stdout, stderr, t = Open3.popen3(cmd)
       stdout.binmode if binmode
       output = stdout.read.strip
@@ -48,11 +53,13 @@ module Favicon
 
     def identify
       self.class.with_temp_data_file(@data) do |t|
-        self.class.run_imagemagick_cmd("identify #{t.path.to_s}")
+        imagemagick_run("identify #{t.path.to_s}")
       end
     end
 
     # Does the data look like a valid favicon?
+    # TODO return reasons why the favicon data is invalid
+    # TODO ignore favicons that are close to one solid color
     def valid?
       return false if mime_type =~ /(text|html|xml|x-empty)/
       !blank? && !transparent?
@@ -68,14 +75,33 @@ module Favicon
     def transparent?
       self.class.with_temp_data_file(@data) do |t|
         cmd = "convert #{t.path.to_s} -channel a -negate -format '%[mean]' info:"
-        self.class.run_imagemagick_cmd(cmd).to_i == 0
+        imagemagick_run(cmd).to_i == 0
+      end
+    end
+
+    def one_color?
+      colors_stdev < STDEV_THRESHOLD
+    end
+
+    def colors_stdev
+      self.class.with_temp_data_file(to_png) do |t|
+        cmd = "identify -format '%[fx:image.standard_deviation]' #{t.path.to_s}"
+        imagemagick_run(cmd).to_f
+      end
+    end
+
+    def n_colors
+      self.class.with_temp_data_file(@data) do |t|
+        cmd = "identify -format '%k' #{t.path.to_s}"
+        imagemagick_run(cmd).to_i
       end
     end
 
     # Export data as a 16x16 png
     def to_png
+      return @png_data if defined?(@png_data)
       self.class.with_temp_data_file(@data) do |t|
-        sizes = self.class.run_imagemagick_cmd("identify #{t.path.to_s}").split(/\n/)
+        sizes = imagemagick_run("identify #{t.path.to_s}").split(/\n/)
         files = []
         %w(16x16 32x32 64x64).each do |dims|
           %w(32-bit 24-bit 16-bit 8-bit).each do |bd|
@@ -84,9 +110,9 @@ module Favicon
           end
         end
         cmd = "convert -strip -resize 16x16! #{files.uniq[0] || "#{t.path.to_s}[0]"} png:fd:1"
-        png_data = self.class.run_imagemagick_cmd(cmd, true)
-        raise Favicon::InvalidData.new("Empty png") if png_data.empty?
-        png_data
+        @png_data = imagemagick_run(cmd, true)
+        raise Favicon::InvalidData.new("Empty png") if @png_data.empty?
+        @png_data
       end
     end
 

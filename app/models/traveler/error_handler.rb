@@ -21,7 +21,8 @@ class Traveler::ErrorHandler
       "insufficient image data",         # query_url: advantage.asus.com
       "unexpected end-of-file",
       "Expected 8 bytes; found 0 bytes", # query_url: www.mytreesunshinecoast.com
-      "convert: corrupt image"           # query_url: www.tinyvital.com
+      "convert: corrupt image",          # query_url: www.tinyvital.com
+      "Premature end of JPEG",           # query_url: www.ciw.com.cn
     ]
 
   }

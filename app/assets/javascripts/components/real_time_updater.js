@@ -8,6 +8,7 @@ Components.RealTimeUpdater = function() {
 
   var startFetcher = function(first_id) {
     return new RSVP.Promise(function(resolve, reject) {
+      // TODO reject if queue is too full
       if (next_id == last_checked_id) {
         reject("Already checked " + next_id);
       } else {
@@ -146,7 +147,8 @@ Components.RealTimeUpdater = function() {
   };
 
   var periodicallyAddFaviconsFromQueue = function() {
-    var delay = ~~ (750 + Math.random() * 500);
+    // TODO lower delay for larger queue sizes
+    var delay = ~~ (500 + Math.random() * 500);
     addFaviconFromQueue();
     setTimeout(periodicallyAddFaviconsFromQueue, delay);
   };
