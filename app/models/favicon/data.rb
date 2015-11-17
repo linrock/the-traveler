@@ -13,17 +13,23 @@ module Favicon
       @data = data
     end
 
-    def self.get_mime_type(data)
+    def self.with_temp_data_file(data, &block)
       begin
-        t = Tempfile.new "favicon_data"
+        t = Tempfile.new(["favicon", ".ico"])
         t.binmode
         t.write data
         t.close
-        m_type = `file -b --mime-type #{t.path.to_s}`.strip
+        result = block.call(t)
       ensure
         t.unlink
       end
-      m_type
+      result
+    end
+
+    def self.get_mime_type(data)
+      with_temp_data_file(data) do |t|
+        `file -b --mime-type #{t.path.to_s}`.strip
+      end
     end
 
     def self.run_imagemagick_cmd(cmd, binmode = false)
@@ -40,20 +46,29 @@ module Favicon
       self.class.get_mime_type(@data)
     end
 
+    def identify
+      self.class.with_temp_data_file(@data) do |t|
+        self.class.run_imagemagick_cmd("identify #{t.path.to_s}")
+      end
+    end
+
     # Does the data look like a valid favicon?
     def valid?
+      return false if blank?
+      mime_type !~ /(text|html|xml|x-empty)/
+    end
+
+    # data size is invalid or 1x1 file sizes
+    def blank?
       return false if @data.length <= 1
-      mime_type !~ /(text|html|xml)/
+      files = identify.split(/\n/)
+      files.length == 1 && files[0].include?(" 1x1 ")
     end
 
     # Export data as a 16x16 png
     def to_png
-      begin
-        t = Tempfile.new(["favicon", ".ico"])
-        t.binmode
-        t.write @data
-        t.close
-        sizes = self.class.run_imagemagick_cmd("identify #{t.path.to_s}").split /\n/
+      self.class.with_temp_data_file(@data) do |t|
+        sizes = self.class.run_imagemagick_cmd("identify #{t.path.to_s}").split(/\n/)
         files = []
         %w(16x16 32x32 64x64).each do |dims|
           %w(32-bit 24-bit 16-bit 8-bit).each do |bd|
@@ -64,9 +79,7 @@ module Favicon
         cmd = "convert -resize 16x16! #{files.uniq[0] || "#{t.path.to_s}[0]"} png:fd:1"
         data = self.class.run_imagemagick_cmd(cmd, true)
         raise Favicon::InvalidData.new("Empty png") if data.empty?
-        return data
-      ensure
-        t.unlink
+        data
       end
     end
 

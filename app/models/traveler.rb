@@ -4,7 +4,7 @@ class Traveler
 
   def initialize
     @logger = Traveler::Logger.new
-    @beanstalk = Beaneater.new(['localhost:11300'])
+    @beanstalk = Beaneater.new('localhost:11300')
     @tube = @beanstalk.tubes["favicon_urls"]
   end
 
