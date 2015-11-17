@@ -62,10 +62,11 @@ module Favicon
     # TODO ignore favicons that are close to one solid color
     def valid?
       return false if mime_type =~ /(text|html|xml|x-empty)/
-      !blank? && !transparent?
+      !blank? && !transparent? && !one_color?
     end
 
     # data size is invalid or 1x1 file sizes
+    # TODO 1x1 would be caught by one_color?
     def blank?
       return false if @data.length <= 1
       files = identify.split(/\n/)
@@ -95,6 +96,11 @@ module Favicon
         cmd = "identify -format '%k' #{t.path.to_s}"
         imagemagick_run(cmd).to_i
       end
+    end
+
+    # number of bytes in the raw data
+    def size
+      @data.size
     end
 
     # Export data as a 16x16 png
