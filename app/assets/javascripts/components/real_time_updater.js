@@ -24,9 +24,14 @@ Components.RealTimeUpdater = function() {
         dataType: "json",
         success: function(data, status, xhr) {
           var favicons = data.favicons;
+          var status = data.traveler.status;
 
           // TODO update traveler status elsewhere
-          $(".s").text(data.traveler.status);
+          if (!$(".status-icon").hasClass(status)) {
+            $(".status-icon").removeClass()
+              .addClass("status-icon " + status)
+              .attr("title", "Status - " + status);
+          }
 
           if (favicons.length > 0) {
             next_id = _.first(favicons).id;
@@ -81,10 +86,6 @@ Components.RealTimeUpdater = function() {
 
   })();
 
-  var animateFaviconSheet = function() {
-    return animateFaviconIllusion().then(hideFaviconIllusion);
-  };
-
   var animateFaviconIllusion = function() {
     return new RSVP.Promise(function(resolve, reject) {
       var $sheet = $(".favicons .favicon-sheet");
@@ -107,8 +108,6 @@ Components.RealTimeUpdater = function() {
   var removeLastFaviconRow = function() {
     $(".favicons .favicon-sheet:not(.illusion) .favicon-row").last().remove();
   };
-
-  window.animateFaviconSheet = animateFaviconSheet;
 
 
   // Favicon queue

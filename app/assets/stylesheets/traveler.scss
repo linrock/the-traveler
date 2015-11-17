@@ -177,19 +177,43 @@ background: white;
   width: $right-width;
   color: #111;
 
+  .status-icon {
+    display: inline-block;
+    border-radius: 99px;
+    width: 10px;
+    height: 10px;
+    position: relative;
+    top: -3px;
+    left: 12px;
+
+    &.active {
+      background: #00DC00;
+    }
+
+    &.resting {
+      background: #FFD91C;
+    }
+
+    &.inactive {
+      background: #DCDCDC;
+    }
+
+  }
+
   .intro {
     opacity: 0.75;
     font-size: 26px;
     line-height: 40px;
   }
 
+  // status text (consider deprecating)
   .status {
     opacity: 0.6;
     margin-top: 40px;
   }
 
+  // Not yet implemented
   .neighborhoods {
-    display: none;
     margin-top: 60px;
     // -webkit-font-smoothing: antialiased;
 

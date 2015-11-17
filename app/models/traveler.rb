@@ -16,15 +16,15 @@ class Traveler
     Rails.cache.write("traveler:status", status)
   end
 
-  def is_active?
-    snapshot = FaviconSnapshot.order("id DESC").first
-    snapshot.created_at > 5.minutes.ago
-  end
+  # def is_active?
+  #   snapshot = FaviconSnapshot.order("id DESC").first
+  #   snapshot.created_at > 30.seconds.ago
+  # end
 
-  def status
-    return "active" if is_active?
-    "resting"
-  end
+  # def status
+  #   return "active" if is_active?
+  #   "resting"
+  # end
 
   def export_state(options = {})
     state = {}
@@ -72,7 +72,7 @@ class Traveler
           @logger.error error, :log_backtrace => @error_handler.show_backtrace?
           sleep(5) if @error_handler.should_delay?
           unless @error_handler.should_ignore?
-            set_status "paused"
+            set_status "resting"
             state = export_state({ :fetcher => snapshot.fetcher, :error => error })
             write_state_as_fixture(state)
             binding.pry
@@ -84,7 +84,7 @@ class Traveler
         job.delete
       end
     ensure
-      set_status "resting"
+      set_status "inactive"
       @beanstalk.close
     end
   end

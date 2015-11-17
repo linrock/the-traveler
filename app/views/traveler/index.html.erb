@@ -51,7 +51,11 @@
 
   <div class="messages">
 
-    <h1 class="title">Traveler</h1>
+    <h1 class="title">
+      Traveler
+      <div class="status-icon <%= @traveler.status %>"
+           title="Status - <%= @traveler.status %>"></div>
+    </h1>
 
     <div class="intro">
       This is the path of a traveler <br>
@@ -59,11 +63,11 @@
       the web
     </div>
 
-    <div class="status">
+    <div class="status" style="display: none;">
       Status &ndash; <span class="s"><%= @traveler.status %></span>
     </div>
 
-    <div class="neighborhoods">
+    <div class="neighborhoods" style="display: none;">
       <h3>Recent neighborhoods</h3>
 
       <div class="neighborhood">*.blogger.com</div>
