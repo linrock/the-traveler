@@ -37,6 +37,7 @@ class Traveler::Directions::Beanstalkd
             binding.pry
             add_url url, 1
           end
+          @traveler.set_status "active"
         ensure
           snapshot = nil
         end

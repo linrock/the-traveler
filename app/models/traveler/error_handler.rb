@@ -26,6 +26,12 @@ class Traveler::ErrorHandler
 
   }
 
+  IGNORED_BACKTRACES = [
+    Favicon::NotFound,
+    Favicon::CurlError,
+    Favicon::Curl::DNSError
+  ]
+
   def initialize(error)
     @error = error
     @class = error.class
@@ -33,7 +39,7 @@ class Traveler::ErrorHandler
   end
 
   def show_backtrace?
-    return true unless [ Favicon::NotFound, Favicon::CurlError ].include? @class
+    return true unless IGNORED_BACKTRACES.include? @class
   end
 
   # ie. delays on DNS resolution errors to prevent huge sets of domains being

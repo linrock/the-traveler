@@ -233,4 +233,21 @@ background: white;
 
 }
 
+@media screen and (max-width: 640px) {
+
+  .container {
+    width: auto;
+  }
+
+  .favicons {
+    float: none;
+    margin: 75px auto;
+  }
+
+  .messages {
+    display: none;
+  }
+
+}
+
 }
