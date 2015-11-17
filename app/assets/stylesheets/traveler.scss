@@ -25,10 +25,26 @@ background: white;
   width: $left-width;
   margin: 75px 0;
   overflow: hidden;
+  position: relative;
 }
 
 .favicon-sheet {
   transition: opacity 0.25s ease;
+
+  &.illusion {
+    background: white;
+    position: absolute;
+    transition: transform 0.25s ease;
+    z-index: 1;
+    left: 0;
+    top: 0;
+
+    &.anim {
+      transform: translate3d(0, 30px, 0);
+    }
+
+  }
+
 }
 
 .favicon {
@@ -60,6 +76,11 @@ background: white;
 
 .favicon-row {
   overflow: hidden;
+  transition: opacity 0.15s ease;
+
+  &.invisible {
+    opacity: 0;
+  }
 
   &.left .favicon {
     float: left;
@@ -79,9 +100,10 @@ background: white;
 
 .favicon-fader {
   height: 0;
-  opacity: 0.5;
+  // opacity: 0.5;
   position: relative;
   top: -( 16px + $f-margin );
+  z-index: 10;
 
   &.twinkling {
     animation-duration: 4s;
@@ -92,27 +114,39 @@ background: white;
 
   .favicon-fade {
     position: absolute;
-    background: white;
+    background: rgba(255,255,255,0.5);
+
+    &.entrance {
+      width: 100%;
+      height: $f-margin;
+      top: -74px;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.5), rgba(255,255,255,0.99));
+    }
 
     &.row {
       width: 100%;
-      height: 16px;
+      height: 80px;
+      top: -64px;
+      background: linear-gradient(to top, rgba(255,255,255,0.99), rgba(255,255,255,0.5));
     }
 
     &.left {
       left: 0;
-      bottom: 0;
+      top: 0;
     }
 
     &.right {
       right: 0;
-      bottom: 0;
+      top: 0;
     }
   }
 
 }
 
 .favicon-trail {
+  opacity: 0.4;
+  position: relative;
+  z-index: 10;
 
   .favicon-ghost {
     background: #F7F7F7;
@@ -133,6 +167,9 @@ background: white;
 
 }
 
+
+// Right column with text/status/etc.
+
 .messages {
   float: left;
   margin-top: 75px;
@@ -149,6 +186,25 @@ background: white;
   .status {
     opacity: 0.6;
     margin-top: 40px;
+  }
+
+  .neighborhoods {
+    display: none;
+    margin-top: 60px;
+    // -webkit-font-smoothing: antialiased;
+
+    h3 {
+      color: rgba(0,0,0,0.7);
+      font-size: 15px;
+      margin-bottom: 20px;
+    }
+
+    .neighborhood {
+      color: rgba(0,0,0,0.8);
+      font-size: 18px;
+      -webkit-font-smoothing: antialiased;
+    }
+
   }
 
 }

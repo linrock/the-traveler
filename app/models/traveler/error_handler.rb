@@ -20,7 +20,8 @@ class Traveler::ErrorHandler
       'delegate failed `"dwebp"',        # TODO
       "insufficient image data",         # query_url: advantage.asus.com
       "unexpected end-of-file",
-      "Expected 8 bytes; found 0 bytes"  # query_url: www.mytreesunshinecoast.com
+      "Expected 8 bytes; found 0 bytes", # query_url: www.mytreesunshinecoast.com
+      "convert: corrupt image"           # query_url: www.tinyvital.com
     ]
 
   }

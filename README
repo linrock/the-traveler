@@ -39,13 +39,31 @@ Known issues:
 
 
 * Handle empty favicons
-  * http://peacenow.org.il    - all white
-  * http://realclimate.org    - saved as transparent, but should not be
-  * http://faultline.org      - should have a favicon
-  * http://www.ninepearls.com - redirects to hugedomains.com, which has a favicon
+  * http://peacenow.org.il      - all white
+  * http://www.scooterlibby.org  - no favicon exists here, but an empty one is saved
+  * http://www.erepubliclabs.com - no favicon exists here, but an empty one is saved
+  * http://shop.patheos.com      - no favicon, but an empty one is saved
+  * http://www.thejohnwilkesclub.com - no favicon (404), but an empty one is saved
+
+* Handle favicons incorrectly saved as blank
+  * http://realclimate.org         - saved as transparent, but favicon exists
+  * http://www.lionpublishers.com  - saved as blank, but site has a favicon
+  * http://www.ninepearls.com      - redirects to hugedomains.com, which has a favicon
+  * http://www.mcfreedom.com       - redirects to hugedomains.com, but saved as white
+  * http://faultline.org           - should have a favicon
 
 * Don't save transparent favicons
-  * http://www.populist.com      - transparent favicon
-  * http://allspinzone.com       - transparent favicon
-  * http://www.debtdeflation.com - transparent favicon
+  * http://www.populist.com        - transparent favicon
+  * http://allspinzone.com         - transparent favicon
+  * http://www.debtdeflation.com   - transparent favicon
+
+* Don't save 1x1 favicons
+  * http://defendyourhealthcare.us - 1x1 favicon.ico
+  * http://dirhost.com             - 1x1 favicon.ico
+  * http://objectivistanswers.com  - 1x1 favicon.ico
+  * http://www.familysecuritymatters.org - 1x1 favicon.ico
+  * http://www.climatescienceinternational.org - 1x1 favicon.ico
+
+* Don't save white favicons
+  * http://www.shepherdspi.com     - 16x16 white favicon.ico
 

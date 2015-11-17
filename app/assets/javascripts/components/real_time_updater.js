@@ -1,10 +1,10 @@
 Components.RealTimeUpdater = function() {
 
-  const N_COLS = 5;
 
+  // Favicon fetcher
+  //
   var next_id = Traveler.first_id;
   var last_checked_id = false;
-  var favicon_queue = [];
 
   var startFetcher = function(first_id) {
     return new RSVP.Promise(function(resolve, reject) {
@@ -41,11 +41,10 @@ Components.RealTimeUpdater = function() {
     });
   };
 
-  var queueRecentFavicons = function(favicons) {
-    favicon_queue = favicon_queue.concat(favicons);
-    var n = favicon_queue.length;
-    console.log("Adding " + favicons.length + " favicons to queue (" + n + " total)");
-  };
+
+  // Favicon renderer
+  //
+  const N_COLS = 5;
 
   var template = _.template(
     '<img class="favicon invisible"' +
@@ -70,7 +69,8 @@ Components.RealTimeUpdater = function() {
       if ($row.length == 0 || $row.find(".favicon").length == N_COLS) {
         $row = $createRow();
         $(".favicons .favicon-sheet").prepend($row);
-        $(".favicons .favicon-row").last().remove();
+        animateFaviconIllusion().then(hideFaviconIllusion);
+        removeLastFaviconRow();
       }
       return $row;
     };
@@ -80,6 +80,46 @@ Components.RealTimeUpdater = function() {
     };
 
   })();
+
+  var animateFaviconSheet = function() {
+    return animateFaviconIllusion().then(hideFaviconIllusion);
+  };
+
+  var animateFaviconIllusion = function() {
+    return new RSVP.Promise(function(resolve, reject) {
+      var $sheet = $(".favicons .favicon-sheet");
+      var $illusion = $sheet.clone().addClass("illusion");
+      $illusion.appendTo($(".favicons"));
+      setTimeout(function() {
+        $illusion.addClass("anim");
+        $illusion.find(".favicon-row").last().addClass("invisible");
+        setTimeout(function() {
+          resolve($illusion);
+        }, 250);
+      }, 10);
+    });
+  };
+
+  var hideFaviconIllusion = function($illusion) {
+    $illusion.remove();
+  };
+
+  var removeLastFaviconRow = function() {
+    $(".favicons .favicon-sheet:not(.illusion) .favicon-row").last().remove();
+  };
+
+  window.animateFaviconSheet = animateFaviconSheet;
+
+
+  // Favicon queue
+  //
+  var favicon_queue = [];
+
+  var queueRecentFavicons = function(favicons) {
+    favicon_queue = favicon_queue.concat(favicons);
+    var n = favicon_queue.length;
+    console.log("Adding " + favicons.length + " favicons to queue (" + n + " total)");
+  };
 
   var addFaviconFromQueue = function() {
     var favicon = favicon_queue.shift();
@@ -112,6 +152,9 @@ Components.RealTimeUpdater = function() {
     setTimeout(periodicallyAddFaviconsFromQueue, delay);
   };
 
+
+  // init
+  //
   pollForFavicons();
   periodicallyAddFaviconsFromQueue();
 
