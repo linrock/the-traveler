@@ -55,7 +55,7 @@ module Favicon
     # Does the data look like a valid favicon?
     def valid?
       return false if mime_type =~ /(text|html|xml|x-empty)/
-      !blank?
+      !blank? && !transparent?
     end
 
     # data size is invalid or 1x1 file sizes
@@ -63,6 +63,13 @@ module Favicon
       return false if @data.length <= 1
       files = identify.split(/\n/)
       files.length == 1 && files[0].include?(" 1x1 ")
+    end
+
+    def transparent?
+      self.class.with_temp_data_file(@data) do |t|
+        cmd = "convert #{t.path.to_s} -channel a -negate -format '%[mean]' info:"
+        self.class.run_imagemagick_cmd(cmd).to_i == 0
+      end
     end
 
     # Export data as a 16x16 png
