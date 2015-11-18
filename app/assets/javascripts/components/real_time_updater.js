@@ -173,6 +173,7 @@ Components.RealTimeUpdater = function() {
 
     var i = 0;
     var direction = 0;
+    var $sheet = $(".favicons .favicon-sheet");
 
     var checkFaviconQueue = function() {
       return new RSVP.Promise(function(resolve, reject) {
@@ -213,7 +214,6 @@ Components.RealTimeUpdater = function() {
       };
 
       return new RSVP.Promise(function(resolve, reject) {
-        var $sheet = $(".favicons .favicon-sheet");
         var $illusion = $sheet.clone().addClass("illusion");
         $sheet.prepend($createRow());
         $sheet.find(".favicon-row").last().remove();
@@ -244,7 +244,7 @@ Components.RealTimeUpdater = function() {
     var showFavicon = function() {
       var $favicon = $(template({ favicon: favicon_queue.shift() }));
       return new RSVP.Promise(function(resolve, reject) {
-        $favicon.appendTo($(".favicons .favicon-sheet .favicon-row").first());
+        $favicon.appendTo($sheet.find(".favicon-row").first());
         setTimeout(function() {
           $favicon.removeClass("invisible");
           setTimeout(function() {
@@ -255,7 +255,7 @@ Components.RealTimeUpdater = function() {
     };
 
     var delayedRun = function() {
-      var delay = ~~ (500 + Math.random() * 500);
+      var delay = ~~ (400 + Math.random() * 500);
       setTimeout(run, delay);
     };
 
