@@ -108,14 +108,15 @@ module Favicon
       return @png_data if defined?(@png_data)
       self.class.with_temp_data_file(@data) do |t|
         sizes = imagemagick_run("identify #{t.path.to_s}").split(/\n/)
-        files = []
+        images = []
         %w(16x16 32x32 64x64).each do |dims|
           %w(32-bit 24-bit 16-bit 8-bit).each do |bd|
-            files += sizes.select {|x| x.include?(dims) and x.include?(bd) }.
-                           map    {|x| x.split(' ')[0]}
+            images += sizes.select {|x| x.include?(dims) and x.include?(bd) }.
+                           map     {|x| x.split(' ')[0] }
           end
         end
-        cmd = "convert -strip -resize 16x16! #{files.uniq[0] || "#{t.path.to_s}[0]"} png:fd:1"
+        image_to_convert = images.uniq[0] || "#{t.path.to_s}[0]"
+        cmd = "convert -strip -resize 16x16! #{image_to_convert} png:fd:1"
         @png_data = imagemagick_run(cmd, true)
         raise Favicon::InvalidData.new("Empty png") if @png_data.empty?
         @png_data

@@ -70,7 +70,8 @@ Known issues:
   * http://nextrestaurant.com - 1x1 favicon.ico
 
 * Don't save white favicons
-  * http://www.shepherdspi.com     - 16x16 white favicon.ico
+  * http://www.shepherdspi.com    - 16x16 white favicon.ico
+  * http://www.ichaier.com        - 32x32 white favicon.ico
 
 * Don't save solid-colored favicons
   * http://xosippin.tumblr.com     - solid gray

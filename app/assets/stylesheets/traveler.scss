@@ -4,9 +4,10 @@ body[data-controller="traveler"] {
 $n-cols: 5;
 $f-size: 16px;
 $f-margin: 14px;
+$f-space: $f-size + $f-margin;
 
 $container-width: 640px;
-$left-width: $n-cols * ($f-size + $f-margin);
+$left-width: $n-cols * $f-space;
 $right-width: $container-width - $left-width;
 
 
@@ -29,10 +30,13 @@ background: white;
 
 .the-traveler {
   width: 12px;
+  height: 18px;
   position: relative;
   left: 2px;
   bottom: 1px;
-  transition: transform 0.2s ease;
+  opacity: 0.8;
+  transition: transform 0.25s ease-in-out;
+  margin-bottom: 6px;
 }
 
 .favicons {
@@ -86,6 +90,7 @@ background: white;
 }
 
 .favicon-row {
+  height: $f-space;
   overflow: hidden;
   transition: opacity 0.15s ease;
 
@@ -110,8 +115,10 @@ background: white;
   height: 0;
   pointer-events: none;
   position: relative;
-  top: -( $f-size + $f-margin );
+  top: -$f-space;
   z-index: 10;
+
+  $fader-height: 4 * $f-space;
 
   .favicon-fade {
     position: absolute;
@@ -120,20 +127,20 @@ background: white;
 
     &.rect {
       width: $f-size;
-      height: $f-size + $f-margin;
+      height: $f-space;
     }
 
     &.entrance {
       width: 100%;
       height: $f-margin;
-      top: -104px;
+      top: -$fader-height + $f-size;
       background: linear-gradient(to bottom, rgba(255,255,255,0.1), rgba(255,255,255,0.5));
     }
 
     &.block {
       width: 100%;
-      height: 120px + $f-margin;
-      top: -90px;
+      height: $fader-height;
+      top: -$fader-height + $f-space;
       background: linear-gradient(to top, rgba(255,255,255,0.99), rgba(255,255,255,0.5));
     }
 
@@ -146,7 +153,7 @@ background: white;
     }
 
     &.top {
-      top: -120px - $f-margin;
+      top: -$fader-height - $f-margin;
     }
 
     &.bottom {
