@@ -29,12 +29,13 @@ module Favicon
     end
 
     def curl_cmd(url)
-      "curl -sL -k --compressed -m #{TIMEOUT} --ciphers 'RC4,3DES,ALL' --fail --show-error #{url}"
+      "curl -sL -k --compressed -m #{TIMEOUT} --ciphers 'RC4,3DES,ALL' --fail --show-error '#{url}'"
     end
 
+    # Encodes output as utf8 - Not for binary http responses
     def http_get(url)
       stdin, stdout, stderr, t = Open3.popen3(curl_cmd(url))
-      @html = encode_utf8(stdout.read).strip
+      output = encode_utf8(stdout.read).strip
       if (err = stderr.read.strip).present?
         if err.include? "SSL"
           raise Favicon::Curl::SSLError.new(err)
@@ -44,12 +45,13 @@ module Favicon
           raise Favicon::CurlError.new(err)
         end
       end
+      output
     end
 
     def fetch
-      http_get @query_url
-      get_final_url
-      get_candidate_favicon_urls
+      set_final_url
+      @html = http_get @final_url
+      set_candidate_favicon_urls
       get_favicon
     end
 
@@ -73,7 +75,7 @@ module Favicon
 
     # Tries to find favicon urls from the html content of given url
     #
-    def get_candidate_favicon_urls
+    def set_candidate_favicon_urls
       doc = Nokogiri.parse @html
       @candidate_urls = doc.css(ICON_SELECTORS.join(",")).map {|e| e.attr('href') }.compact
       @candidate_urls.sort_by! {|href|
@@ -103,7 +105,7 @@ module Favicon
 
     # Follow redirects from the query url to get to the last url
     #
-    def get_final_url
+    def set_final_url
       output = `curl -sIL -1 -m #{TIMEOUT} "#{@query_url}"`
       final = encode_utf8(output).scan(/\ALocation: (.*)/)[-1]
       final_url = final && final[0].strip
@@ -131,7 +133,7 @@ module Favicon
         data = url.split(',')[1]
         return data && Base64.decode64(data)
       end
-      http_get url
+      `#{curl_cmd(url)} 2>/dev/null`
     end
 
     def get_urls

@@ -5,25 +5,24 @@ class Traveler::Directions::Beanstalkd
   #
   class ErrorEvader
 
+    THRESHOLD = 10
+
     attr_accessor :n_seq_errors
 
     def initialize(tube)
       @tube = tube
       @n_seq_errors = 0
-      @i = nil
+      @i = -99
     end
 
     def track_index(i)
-      if !@i.nil? && if i - @i > 1
-        @n_seq_errors = 0
-      end
+      @n_seq_errors = 0 if i - @i > 1
       @n_seq_errors += 1
-      puts "i: #{i}, seq: #{@n_seq_errors}"
       @i = i
     end
 
     def should_evade?
-      @n_seq_errors >= 10
+      @n_seq_errors >= THRESHOLD
     end
 
     def evade!
@@ -32,7 +31,7 @@ class Traveler::Directions::Beanstalkd
         job = @tube.reserve
         job.delete
       end
-      @n_seq_errors
+      THRESHOLD
     end
 
   end
@@ -67,9 +66,6 @@ class Traveler::Directions::Beanstalkd
         @logger.log "Failed to fetch for #{url}"
         @logger.error error, :log_backtrace => error_handler.show_backtrace?
         @evader.track_index i
-        if (n = @evader.evade!)
-          @logger.log "Too many sequential errors. Evading the next #{n} urls"
-        end
         sleep(5) if error_handler.should_delay?
         unless error_handler.should_ignore?
           @traveler.set_status "resting"
@@ -86,6 +82,9 @@ class Traveler::Directions::Beanstalkd
         snapshot = nil
       end
       job.delete
+      if (n = @evader.evade!)
+        @logger.log "Too many sequential errors. Evading the next #{n} urls"
+      end
       i += 1
     end
   ensure
