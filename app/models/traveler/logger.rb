@@ -22,13 +22,7 @@ class Traveler::Logger
   end
 
   def log_to_stdout(message, options = {})
-    timestamp = colorize("#{Time.now}", :white)
-    if options[:color]
-      formatted = "[#{timestamp}] #{colorize(message, options[:color])}"
-    else
-      formatted = "[#{timestamp}] #{message}"
-    end
-    puts formatted
+    puts "[#{Time.now}] #{colorize(message, options[:color])}"
   end
 
   def error(error, options = {})
@@ -40,6 +34,7 @@ class Traveler::Logger
   private
 
   def colorize(text, color)
+    return text unless color
     "\e[#{COLORS[color]}m#{text}\e[0m"
   end
 
