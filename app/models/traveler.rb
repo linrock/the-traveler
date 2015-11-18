@@ -17,16 +17,6 @@ class Traveler
     Rails.cache.write("traveler:status", status)
   end
 
-  # def is_active?
-  #   snapshot = FaviconSnapshot.order("id DESC").first
-  #   snapshot.created_at > 30.seconds.ago
-  # end
-
-  # def status
-  #   return "active" if is_active?
-  #   "resting"
-  # end
-
   def export_state(options = {})
     state = {}
     if (fetcher = options[:fetcher]).present?
