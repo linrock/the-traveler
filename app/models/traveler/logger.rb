@@ -1,5 +1,10 @@
 class Traveler::Logger
 
+  COLORS = {
+    :white   => "1;37",
+    :yellow  => "1;33"
+  }
+
   def initialize
     @log_file = File.open(Rails.root.join("log/beanstalk.log"), "a+")
     # @error_file = File.open(Rails.root.join("log/beanstalk.log"), "a+")
@@ -16,9 +21,9 @@ class Traveler::Logger
   end
 
   def log_to_stdout(message, options = {})
-    timestamp = colorize("#{Time.now}", "1;37")
-    if options[:color_code]
-      formatted = "[#{timestamp}] #{colorize(message, options[:color_code])}"
+    timestamp = colorize("#{Time.now}", :white)
+    if options[:color]
+      formatted = "[#{timestamp}] #{colorize(message, options[:color])}"
     else
       formatted = "[#{timestamp}] #{message}"
     end
@@ -28,13 +33,13 @@ class Traveler::Logger
   def error(error, options = {})
     message = "#{error.class}: #{error.message}"
     message = message + error.backtrace.join("\n") if options[:log_backtrace]
-    log message, :color_code => "1;33"
+    log message, :color => :yellow
   end
 
   private
 
-  def colorize(text, color_code)
-    "\e[#{color_code}m#{text}\e[0m"
+  def colorize(text, color)
+    "\e[#{COLORS[color]}m#{text}\e[0m"
   end
 
 end

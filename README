@@ -76,3 +76,10 @@ Known issues:
 * Don't save solid-colored favicons
   * http://xosippin.tumblr.com     - solid gray
 
+
+
+* Don't get stuck in a range of broken subdomains
+  * ex. yueyang.pztuan.com
+  * Track status of visiting a recent set of subdomains
+  * Intelligently ignore subdomains with high error rates
+
