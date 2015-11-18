@@ -171,9 +171,11 @@ Components.RealTimeUpdater = function() {
   //
   var TravelerAnimator = function() {
 
-    var i = 0;
-    var direction = 0;
-    var $sheet = $(".favicons .favicon-sheet");
+    var i = 0,
+        direction = 0;
+
+    var $sheet = $(".favicons .favicon-sheet"),
+        $traveler = $(".the-traveler");
 
     var checkFaviconQueue = function() {
       return new RSVP.Promise(function(resolve, reject) {
@@ -230,7 +232,6 @@ Components.RealTimeUpdater = function() {
     };
 
     var animateTraveler = function() {
-      var $traveler = $(".the-traveler");
       // console.log("animating traveler - " + "i: " + i + ", direction: " + direction);
       var x = i * 30;
       $traveler.css({ "transform" : "translate3d(" + x + "px,0,0)" });

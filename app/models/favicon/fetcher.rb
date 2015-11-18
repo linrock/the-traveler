@@ -92,8 +92,7 @@ module Favicon
         if href.starts_with? "//"
           href = "#{uri.scheme}:#{href}"
         elsif href !~ /\Ahttp/
-          # TODO handle invalid URLS
-          # ex. {http://i50.tinypic.com/wbuzcn.png}
+          # Ignore invalid URLS - ex. {http://i50.tinypic.com/wbuzcn.png}
           href = URI.join(root, href).to_s rescue nil
         end
         href
@@ -132,7 +131,7 @@ module Favicon
         data = url.split(',')[1]
         return data && Base64.decode64(data)
       end
-      `#{curl_cmd(url)}`
+      http_get url
     end
 
     def get_urls
