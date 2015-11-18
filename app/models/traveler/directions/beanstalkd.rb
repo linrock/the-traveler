@@ -56,14 +56,16 @@ class Traveler::Directions::Beanstalkd
     loop do
       job = @tube.reserve
       url = job.body
-      @logger.log "Checking: #{url}"
+      @logger.log "Visiting - #{url}"
       begin
         snapshot = FaviconSnapshot.find_or_init_with_query(url)
         snapshot.init_from_fetcher_results
-        snapshot.save!
+        if snapshot.save!
+          success_str = "Found #{snapshot.favicon_url} (#{snapshot.data.info_str})"
+          @logger.log success_str, :color => :cyan
+        end
       rescue => error
         error_handler = Traveler::ErrorHandler.new(error)
-        @logger.log "Failed to fetch for #{url}"
         @logger.error error, :log_backtrace => error_handler.show_backtrace?
         @evader.track_index i
         sleep(5) if error_handler.should_delay?

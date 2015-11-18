@@ -1,8 +1,9 @@
 class Traveler::Logger
 
   COLORS = {
+    :yellow  => "1;33",
+    :cyan    => "1;36",
     :white   => "1;37",
-    :yellow  => "1;33"
   }
 
   def initialize

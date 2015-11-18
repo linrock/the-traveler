@@ -145,7 +145,7 @@ module Favicon
     end
 
     def has_data?
-      @data.present? && @data.data.present?
+      @data.present? && @data.raw_data.present?
     end
 
     private

@@ -12,10 +12,10 @@ module Favicon
     #
     STDEV_THRESHOLD = 0.005
 
-    attr_accessor :data, :png_data
+    attr_accessor :raw_data, :png_data
 
-    def initialize(data)
-      @data = data
+    def initialize(raw_data)
+      @raw_data = raw_data
     end
 
     def self.with_temp_data_file(data, &block)
@@ -48,11 +48,11 @@ module Favicon
     end
 
     def mime_type
-      self.class.get_mime_type(@data)
+      self.class.get_mime_type(@raw_data)
     end
 
     def identify
-      self.class.with_temp_data_file(@data) do |t|
+      self.class.with_temp_data_file(@raw_data) do |t|
         imagemagick_run("identify #{t.path.to_s}")
       end
     end
@@ -68,13 +68,13 @@ module Favicon
     # data size is invalid or 1x1 file sizes
     # TODO 1x1 would be caught by one_color?
     def blank?
-      return false if @data.length <= 1
+      return false if @raw_data.length <= 1
       files = identify.split(/\n/)
       files.length == 1 && files[0].include?(" 1x1 ")
     end
 
     def transparent?
-      self.class.with_temp_data_file(@data) do |t|
+      self.class.with_temp_data_file(@raw_data) do |t|
         cmd = "convert #{t.path.to_s} -channel a -negate -format '%[mean]' info:"
         imagemagick_run(cmd).to_i == 0
       end
@@ -92,21 +92,32 @@ module Favicon
     end
 
     def n_colors
-      self.class.with_temp_data_file(@data) do |t|
+      self.class.with_temp_data_file(@raw_data) do |t|
         cmd = "identify -format '%k' #{t.path.to_s}"
         imagemagick_run(cmd).to_i
       end
     end
 
-    # number of bytes in the raw data
-    def size
-      @data.size
+    def dimensions
+      self.class.with_temp_data_file(@raw_data) do |t|
+        cmd = "convert #{t.path.to_s}[0] -format '%wx%h' info:"
+        imagemagick_run(cmd)
+      end
     end
 
-    # Export data as a 16x16 png
+    # number of bytes in the raw data
+    def size
+      @raw_data.size
+    end
+
+    def info_str
+      "#{mime_type}, #{dimensions}, #{size} bytes"
+    end
+
+    # Export raw_data as a 16x16 png
     def to_png
       return @png_data if defined?(@png_data)
-      self.class.with_temp_data_file(@data) do |t|
+      self.class.with_temp_data_file(@raw_data) do |t|
         sizes = imagemagick_run("identify #{t.path.to_s}").split(/\n/)
         images = []
         %w(16x16 32x32 64x64).each do |dims|
@@ -124,7 +135,7 @@ module Favicon
     end
 
     def base64_raw_data
-      Base64.encode64(@data).split(/\s+/).join
+      Base64.encode64(@raw_data).split(/\s+/).join
     end
 
     def base64_png
@@ -132,7 +143,7 @@ module Favicon
     end
 
     def inspect
-      "#<Favicon::Data @data=#{@data.nil? ? nil : @data.size}>"
+      "#<Favicon::Data @size=#{@raw_data.nil? ? nil : @raw_data.size}>"
     end
 
   end
