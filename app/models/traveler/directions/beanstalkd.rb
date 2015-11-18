@@ -27,11 +27,13 @@ class Traveler::Directions::Beanstalkd
 
     def evade!
       return unless should_evade?
-      @n_seq_errors.times do |i|
+      n_skips = @n_seq_errors
+      n_skips.times do
         job = @tube.reserve
         job.delete
       end
-      THRESHOLD
+      @n_seq_errors = 0
+      n_skips
     end
 
   end
