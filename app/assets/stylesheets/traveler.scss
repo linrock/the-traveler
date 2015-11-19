@@ -1,7 +1,8 @@
 body[data-controller="traveler"] {
 
-
+$n-favicons: 120;
 $n-cols: 5;
+
 $f-size: 16px;
 $f-margin: 14px;
 $f-space: $f-size + $f-margin;
@@ -53,6 +54,7 @@ background: white;
 }
 
 .favicon-sheet {
+  height: $n-favicons / $n-cols * $f-space;
   transition: opacity 0.25s ease;
 
   &.illusion {

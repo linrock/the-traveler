@@ -1,5 +1,7 @@
 Components.RealTimeUpdater = function() {
 
+  const N_COLS = 5;
+
 
   // Favicon fetcher
   //
@@ -50,76 +52,6 @@ Components.RealTimeUpdater = function() {
   };
 
 
-  // Favicon renderer
-  //
-  const N_COLS = 5;
-
-  var template = _.template(
-    '<img class="favicon invisible"' +
-         'src="<%- favicon.favicon_data_uri %>"' +
-         'title="<%- favicon.query_url %>">'
-  );
-
-  var faviconRowHandler = (function() {
-    var polarity = 'right';
-
-    var $firstRow = function() {
-      return $(".favicons .favicon-row").first();
-    };
-
-    var $createRow = function() {
-      if (polarity == 'left') {
-        polarity = 'right';
-      } else {
-        polarity = 'left';
-      };
-      return $('<div>').addClass("favicon-row " + polarity);
-    };
-
-    var $topRow = function() {
-      var $row = $firstRow();
-      if ($row.length == 0 || $row.find(".favicon").length == N_COLS) {
-        $row = $createRow();
-        $(".favicons .favicon-sheet").prepend($row);
-        animateFaviconIllusion().then(hideFaviconIllusion);
-        removeLastFaviconRow();
-      }
-      return $row;
-    };
-
-    return {
-      $topRow: $topRow
-    };
-
-  })();
-
-
-  // Favicon sheet-sliding illusion when prepending favicons
-  //
-  var animateFaviconIllusion = function() {
-    return new RSVP.Promise(function(resolve, reject) {
-      var $sheet = $(".favicons .favicon-sheet");
-      var $illusion = $sheet.clone().addClass("illusion");
-      $illusion.appendTo($(".favicons"));
-      setTimeout(function() {
-        $illusion.addClass("anim");
-        $illusion.find(".favicon-row").last().addClass("invisible");
-        setTimeout(function() {
-          resolve($illusion);
-        }, 250);
-      }, 10);
-    });
-  };
-
-  var hideFaviconIllusion = function($illusion) {
-    $illusion.remove();
-  };
-
-  var removeLastFaviconRow = function() {
-    $(".favicons .favicon-sheet:not(.illusion) .favicon-row").last().remove();
-
-  };
-
   // Favicon queue
   //
   var favicon_queue = [];
@@ -143,39 +75,22 @@ Components.RealTimeUpdater = function() {
       });
   };
 
-  var addFaviconFromQueue = function() {
-    var favicon = favicon_queue.shift();
-    if (!favicon) {
-      return;
-    }
-    var $favicon = $(template({ favicon: favicon }));
 
-    prepareToAddFavicon()
-      .then();
-
-    $favicon.appendTo(faviconRowHandler.$topRow());
-    setTimeout(function() {
-      $favicon.removeClass("invisible");
-    }, 50);
-  };
-
-  var periodicallyAddFaviconsFromQueue = function() {
-    // TODO lower delay for larger queue sizes
-    var delay = ~~ (500 + Math.random() * 500);
-    addFaviconFromQueue();
-    setTimeout(periodicallyAddFaviconsFromQueue, delay);
-  };
-
-
-  // New animator that moves the traveler
+  // New animator that also moves the traveler
   //
-  var TravelerAnimator = function() {
+  var FaviconSheetAnimator = function() {
 
     var i = 0,
         direction = 0;
 
     var $sheet = $(".favicons .favicon-sheet"),
         $traveler = $(".the-traveler");
+
+    var faviconTemplate = _.template(
+      '<img class="favicon invisible"' +
+           'src="<%- favicon.favicon_data_uri %>"' +
+           'title="<%- favicon.query_url %>">'
+    );
 
     var checkFaviconQueue = function() {
       return new RSVP.Promise(function(resolve, reject) {
@@ -218,11 +133,17 @@ Components.RealTimeUpdater = function() {
       return new RSVP.Promise(function(resolve, reject) {
         var $illusion = $sheet.clone().addClass("illusion");
         $sheet.prepend($createRow());
-        $sheet.find(".favicon-row").last().remove();
+        var $rows = $sheet.find(".favicon-row");
+        var maxRowsReached = $rows.length > Traveler.max_rows;
+        if (maxRowsReached) {
+          $rows.last().remove();
+        }
         $illusion.appendTo($(".favicons"));
         setTimeout(function() {
           $illusion.addClass("anim");
-          $illusion.find(".favicon-row").last().addClass("invisible");
+          if (maxRowsReached) {
+            $illusion.find(".favicon-row").last().addClass("invisible");
+          }
           setTimeout(function() {
             $illusion.remove();
             resolve();
@@ -232,7 +153,6 @@ Components.RealTimeUpdater = function() {
     };
 
     var animateTraveler = function() {
-      // console.log("animating traveler - " + "i: " + i + ", direction: " + direction);
       var x = i * 30;
       $traveler.css({ "transform" : "translate3d(" + x + "px,0,0)" });
       return new RSVP.Promise(function(resolve, reject) {
@@ -243,7 +163,7 @@ Components.RealTimeUpdater = function() {
     };
 
     var showFavicon = function() {
-      var $favicon = $(template({ favicon: favicon_queue.shift() }));
+      var $favicon = $(faviconTemplate({ favicon: favicon_queue.shift() }));
       return new RSVP.Promise(function(resolve, reject) {
         $favicon.appendTo($sheet.find(".favicon-row").first());
         setTimeout(function() {
@@ -256,6 +176,7 @@ Components.RealTimeUpdater = function() {
     };
 
     var delayedRun = function() {
+    // TODO lower delay for larger queue sizes
       var delay = ~~ (400 + Math.random() * 500);
       setTimeout(run, delay);
     };
@@ -280,7 +201,6 @@ Components.RealTimeUpdater = function() {
   // init
   //
   pollForFavicons();
-  // periodicallyAddFaviconsFromQueue();
-  TravelerAnimator().run();
+  FaviconSheetAnimator().run();
 
 };
