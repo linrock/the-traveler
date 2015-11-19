@@ -37,21 +37,17 @@ class FaviconSnapshot < ActiveRecord::Base
     alias_method :lookup!, :find_or_fetch!
 
     def get_recent_favicons
-      order("id DESC").limit(120)
+      includes(:hashed_favicon_png).order("id DESC").limit(120)
     end
 
     def get_favicons_before(id)
-      where("id < ?", id).order("id DESC").limit(120)
+      includes(:hashed_favicon_png).where("id < ?", id).order("id DESC").limit(120)
     end
 
     def get_favicons_after(id)
-      where("id > ?", id).order("id DESC").limit(120)
+      includes(:hashed_favicon_png).where("id > ?", id).order("id DESC").limit(120)
     end
 
-  end
-
-  def png_data
-    self.hashed_favicon_png.png_data
   end
 
   def init_from_fetcher_results
@@ -69,6 +65,10 @@ class FaviconSnapshot < ActiveRecord::Base
 
   def data
     Favicon::Data.new(raw_data)
+  end
+
+  def png_data
+    self.hashed_favicon_png.png_data
   end
 
   def favicon_data_uri
