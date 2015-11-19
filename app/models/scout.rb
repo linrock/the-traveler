@@ -18,9 +18,9 @@ class Scout
   def process_domain(domain)
     @logger.log "Visiting - #{domain.url}"
     html = domain.visit!
-    if domain.error_message
+    if !domain.accessed?
       @logger.log "Failed: #{domain.error_message}", :color => :yellow
-      return
+      wait_for_available_dns if domain.dns_error?
     end
     enqueue_url domain.url
     urls = find_unique_domains_in_html(html)
@@ -56,6 +56,19 @@ class Scout
                 select {|href| (href =~ /\Ahttps?:\/\//) rescue nil }.
                 map    {|href| URI.parse(href).hostname.downcase.strip rescue nil }.
                 compact.uniq
+  end
+
+  def nameservers_reachable?
+    `ping -c 1 8.8.8.8 &> /dev/null ; echo $?`.to_i == 0
+  end
+
+  def wait_for_available_dns
+    delay = 60
+    while !nameservers_reachable?
+      @logger.log "Can't access nameservers. Waiting for #{delay}s"
+      sleep delay
+      delay += 5 if delay < 900
+    end
   end
 
   def status_update

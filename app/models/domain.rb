@@ -13,14 +13,22 @@ class Domain < ActiveRecord::Base
     html_response = nil
     begin
       html_response = Favicon::HTTPClient.get(self.url)
+      self.error_message = nil
     rescue Favicon::CurlError => error
       self.error_message = error.message
     end
     self.visited = true
-    self.successful = !self.error_message.present?
+    self.accessed = !self.error_message.present?
     self.last_visit_at = Time.now
     self.save!
     html_response
+  end
+
+  def dns_error?
+    return unless error_message.present?
+    ["Couldn't resolve host", "name lookup timed out"].any? do |msg|
+      error_message.include? msg
+    end
   end
 
   def normalize_url
