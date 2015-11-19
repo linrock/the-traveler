@@ -5,6 +5,7 @@
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= stylesheet_link_tag    'https://fonts.googleapis.com/css?family=PT+Sans+Narrow' %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <link rel="icon" href="<%= asset_path "favicon.ico" %>" type="image/x-icon" />
   <%= csrf_meta_tags %>
 </head>
 <body data-controller="<%= params[:controller] %>">
