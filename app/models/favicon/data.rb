@@ -12,10 +12,12 @@ module Favicon
     #
     STDEV_THRESHOLD = 0.005
 
-    attr_accessor :raw_data, :png_data
+    attr_accessor :raw_data, :png_data, :error
 
     def initialize(raw_data)
       @raw_data = raw_data
+      @png_data = nil
+      @error = nil
     end
 
     def self.with_temp_data_file(data, &block)
@@ -56,19 +58,37 @@ module Favicon
     end
 
     # Does the data look like a valid favicon?
-    # TODO return reasons why the favicon data is invalid
-    # TODO ignore favicons that are close to one solid color
+    #
     def valid?
-      return false if mime_type =~ /(text|html|xml|x-empty)/
-      !blank? && !transparent? && !one_color?
+      if blank?
+        @error = "raw_data is blank"
+        return false
+      end
+      if invalid_mime_type?
+        @error = "raw_data mime-type is invalid - #{mime_type}"
+        return false
+      end
+      if transparent?
+        @error = "raw_data is a transparent image"
+        return false
+      end
+      if one_pixel?
+        @error = "raw_data is a 1x1 image"
+        return false
+      end
+      if one_color?
+        @error = "png_data is one color (or close to it)"
+        return false
+      end
+      true
     end
 
-    # data size is invalid or 1x1 file sizes
-    # TODO 1x1 would be caught by one_color?
     def blank?
-      return false if @raw_data.length <= 1
-      files = identify.split(/\n/)
-      files.length == 1 && files[0].include?(" 1x1 ")
+      @raw_data.length <= 1
+    end
+
+    def invalid_mime_type?
+      mime_type =~ /(text|html|xml|x-empty)/
     end
 
     def transparent?
@@ -76,6 +96,11 @@ module Favicon
         cmd = "convert #{t.path.to_s} -channel a -negate -format '%[mean]' info:"
         imagemagick_run(cmd).to_i == 0
       end
+    end
+
+    def one_pixel?
+      files = identify.split(/\n/)
+      files.length == 1 && files[0].include?(" 1x1 ")
     end
 
     def one_color?
@@ -114,7 +139,7 @@ module Favicon
 
     # Export raw_data as a 16x16 png
     def to_png
-      return @png_data if defined?(@png_data)
+      return @png_data if @png_data.present?
       self.class.with_temp_data_file(@raw_data) do |t|
         sizes = imagemagick_run("identify #{t.path.to_s}").split(/\n/)
         images = []
