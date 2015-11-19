@@ -1,0 +1,3 @@
+#!/bin/bash
+
+Rails runner "Scout.new.explore!"
