@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Favicons</title>
+  <title><%= yield(:title) || "Favicons" %></title>
   <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
   <%= stylesheet_link_tag    'https://fonts.googleapis.com/css?family=PT+Sans+Narrow' %>
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>

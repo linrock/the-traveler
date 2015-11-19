@@ -1,4 +1,4 @@
-class Traveler::Logger
+class ColorizedLogger
 
   COLORS = {
     :yellow  => "1;33",
@@ -6,13 +6,12 @@ class Traveler::Logger
     :white   => "1;37",
   }
 
-  def initialize
-    @log_file = File.open(Rails.root.join("log/beanstalk.log"), "a+")
-    # @error_file = File.open(Rails.root.join("log/beanstalk.log"), "a+")
+  def initialize(filename = nil)
+    @log_file = File.open(Rails.root.join(filename), "a+") if filename.present?
   end
 
   def log(message, options = {})
-    log_to_file(message)
+    log_to_file(message) if @log_file.present?
     log_to_stdout(message, options)
   end
 

@@ -6,9 +6,8 @@ module Favicon
   # Actually go and grab the favicon from the given url
   #
   class Fetcher
+    include Favicon::Utils
 
-    # Given a url, grab the favicon
-    #
     TIMEOUT = 5
     ICON_SELECTORS = [ 'link[rel="shortcut icon"]',
                        'link[rel="icon"]',
@@ -20,7 +19,7 @@ module Favicon
     attr_accessor :query_url, :final_url, :favicon_url, :candidate_urls, :html, :data
 
     def initialize(url)
-      @query_url = normalize_url(url)
+      @query_url = prefix_url(url)
       @final_url = nil
       @favicon_url = nil
       @html = nil
@@ -33,6 +32,7 @@ module Favicon
     end
 
     # Encodes output as utf8 - Not for binary http responses
+    #
     def http_get(url)
       stdin, stdout, stderr, t = Open3.popen3(curl_cmd(url))
       output = encode_utf8(stdout.read).strip
@@ -52,10 +52,10 @@ module Favicon
       set_final_url
       @html = http_get @final_url
       set_candidate_favicon_urls
-      get_favicon
+      get_favicon_data
     end
 
-    def get_favicon
+    def get_favicon_data
       return @data if @data.present?
       @data = get_favicon_data_from_candidate_urls
       raise Favicon::NotFound.new(@query_url) unless @data
@@ -64,7 +64,7 @@ module Favicon
 
     def get_favicon_data_from_candidate_urls
       @candidate_urls.each do |url|
-        d = Favicon::Data.new(get_favicon_data(url))
+        d = Favicon::Data.new(get_favicon_data_from_url(url))
         if d.valid?
           @favicon_url = url
           return d
@@ -128,7 +128,7 @@ module Favicon
       @final_url = @query_url
     end
 
-    def get_favicon_data(url)
+    def get_favicon_data_from_url(url)
       if url =~ /^data:/
         data = url.split(',')[1]
         return data && Base64.decode64(data)
@@ -146,22 +146,6 @@ module Favicon
 
     def has_data?
       @data.present? && @data.raw_data.present?
-    end
-
-    private
-
-    def normalize_url(url)
-      url = URI.encode url.strip.downcase
-      if url =~ /https?:\/\//
-        url
-      else
-        "http://#{url}"
-      end
-    end
-
-    def encode_utf8(text)
-      return text if text.valid_encoding?
-      text.encode("UTF-8", :invalid => :replace, :undef => :replace, :replace => '')
     end
 
   end

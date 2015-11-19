@@ -1,4 +1,5 @@
 class FaviconSnapshot < ActiveRecord::Base
+  extend Favicon::Utils
 
   validates_format_of :query_url, :with => /\Ahttps?:\/\//
   validates_format_of :final_url, :with => /\Ahttps?:\/\//
@@ -9,23 +10,23 @@ class FaviconSnapshot < ActiveRecord::Base
   class << self
 
     def most_recent_for_query(query_url)
-      where(:query_url => normalize_url(query_url)).order('id DESC').first
+      where(:query_url => prefix_url(query_url)).order('id DESC').first
     end
 
     def init_with_query(query_url)
-      FaviconSnapshot.new(:query_url => normalize_url(query_url))
+      FaviconSnapshot.new(:query_url => prefix_url(query_url))
     end
 
     def find_or_init_with_query(query_url)
-      normalized_url = normalize_url(query_url)
-      favicon_snapshot = FaviconSnapshot.most_recent_for_query(normalized_url)
+      prefixed_url = prefix_url(query_url)
+      favicon_snapshot = FaviconSnapshot.most_recent_for_query(prefixed_url)
       return favicon_snapshot if favicon_snapshot.present?
-      FaviconSnapshot.init_with_query(normalized_url)
+      FaviconSnapshot.init_with_query(prefixed_url)
     end
 
     def find_or_fetch!(query_url)
-      normalized_url = normalize_url(query_url)
-      favicon_snapshot = FaviconSnapshot.find_or_init_with_query(normalized_url)
+      prefixed_url = prefix_url(query_url)
+      favicon_snapshot = FaviconSnapshot.find_or_init_with_query(prefixed_url)
       return favicon_snapshot if favicon_snapshot.persisted?
       favicon_snapshot.init_from_fetcher_results
       favicon_snapshot.save!
@@ -81,17 +82,6 @@ class FaviconSnapshot < ActiveRecord::Base
     t.write png_data
     t.flush
     t
-  end
-
-  private
-
-  def self.normalize_url(url)
-    url = URI.encode url.strip.downcase
-    if url =~ /\Ahttps?:\/\//
-      url
-    else
-      "http://#{url}"
-    end
   end
 
 end

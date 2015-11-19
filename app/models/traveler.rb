@@ -5,7 +5,7 @@ class Traveler
   attr_reader :logger, :directions
 
   def initialize
-    @logger = Traveler::Logger.new
+    @logger = ColorizedLogger.new("log/traveler.log")
     @directions = nil
   end
 
