@@ -21,6 +21,7 @@ class Scout
     if !domain.accessed?
       @logger.log "Failed: #{domain.error_message}", :color => :yellow
       wait_for_available_dns if domain.dns_error?
+      return
     end
     enqueue_url domain.url
     urls = find_unique_domains_in_html(html)

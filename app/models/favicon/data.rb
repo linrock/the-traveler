@@ -75,6 +75,7 @@ module Favicon
       @raw_data.length <= 1
     end
 
+    # TODO add application/octet-stream as invalid?
     def invalid_mime_type?
       mime_type =~ /(text|html|xml|x-empty)/
     end

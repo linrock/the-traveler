@@ -83,3 +83,7 @@ Known issues:
   * Track status of visiting a recent set of subdomains
   * Intelligently ignore subdomains with high error rates
 
+
+* Invalid image data
+  * http://www.area17.com/ - imagemagick fails to parse this, but Chrome displays the favicon correctly
+
