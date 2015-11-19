@@ -51,7 +51,7 @@ class Scout
     doc = Nokogiri::HTML.parse html
     links = doc.css("a").map {|a| a.attr("href") }.
                 select {|href| (href =~ /\Ahttps?:\/\//) rescue nil }.
-                map    {|href| URI.parse(href).hostname.downcase rescue nil }.
+                map    {|href| URI.parse(href).hostname.downcase.strip rescue nil }.
                 compact.uniq
   end
 
@@ -73,6 +73,10 @@ class Scout
   end
 
   def explore!
+    if Domain.uncharted.count == 0
+      @logger.log "No more domains to visit. Exiting"
+      exit 1
+    end
     loop do
       if queue_is_fat?
         @logger.log "Taking a break - queue is pretty full (#{queue_size})"
@@ -81,6 +85,7 @@ class Scout
       end
       visit_uncharted_domains
       status_update
+      sleep 2
     end
   ensure
     @beanstalk.close

@@ -27,7 +27,7 @@ class Domain < ActiveRecord::Base
     if self.url !~ /\Ahttps?:\/\//
       self.url = "http://#{self.url}"
     end
-    self.url = URI.encode(URI.parse(url).hostname.downcase)
+    self.url = URI.encode(URI.parse(url).hostname.downcase.strip)
   end
 
 end

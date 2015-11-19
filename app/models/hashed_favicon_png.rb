@@ -1,3 +1,5 @@
+# Hashed/de-duplicated 16x16 PNG versions of the raw favicons
+#
 class HashedFaviconPng < ActiveRecord::Base
   has_many :favicon_snapshots
 
