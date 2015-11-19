@@ -6,6 +6,7 @@ module Favicon
   # For handling anything related to the data of the favicon itself
   #
   class Data
+    include Favicon::Utils
 
     # Threshold for stdev of color values under which the image data
     # is considered one color
@@ -18,19 +19,6 @@ module Favicon
       @raw_data = raw_data
       @png_data = nil
       @error = nil
-    end
-
-    def self.with_temp_data_file(data, &block)
-      begin
-        t = Tempfile.new(["favicon", ".ico"])
-        t.binmode
-        t.write data
-        t.close
-        result = block.call(t)
-      ensure
-        t.unlink
-      end
-      result
     end
 
     def self.get_mime_type(data)
@@ -52,7 +40,7 @@ module Favicon
     end
 
     def identify
-      self.class.with_temp_data_file(@raw_data) do |t|
+      with_temp_data_file(@raw_data) do |t|
         imagemagick_run("identify #{t.path.to_s}")
       end
     end
@@ -92,7 +80,7 @@ module Favicon
     end
 
     def transparent?
-      self.class.with_temp_data_file(@raw_data) do |t|
+      with_temp_data_file(@raw_data) do |t|
         cmd = "convert #{t.path.to_s} -channel a -negate -format '%[mean]' info:"
         imagemagick_run(cmd).to_i == 0
       end
@@ -108,21 +96,21 @@ module Favicon
     end
 
     def colors_stdev
-      self.class.with_temp_data_file(to_png) do |t|
+      with_temp_data_file(to_png) do |t|
         cmd = "identify -format '%[fx:image.standard_deviation]' #{t.path.to_s}"
         imagemagick_run(cmd).to_f
       end
     end
 
     def n_colors
-      self.class.with_temp_data_file(@raw_data) do |t|
+      with_temp_data_file(@raw_data) do |t|
         cmd = "identify -format '%k' #{t.path.to_s}"
         imagemagick_run(cmd).to_i
       end
     end
 
     def dimensions
-      self.class.with_temp_data_file(@raw_data) do |t|
+      with_temp_data_file(@raw_data) do |t|
         cmd = "convert #{t.path.to_s}[0] -format '%wx%h' info:"
         imagemagick_run(cmd)
       end
@@ -140,7 +128,7 @@ module Favicon
     # Export raw_data as a 16x16 png
     def to_png
       return @png_data if @png_data.present?
-      self.class.with_temp_data_file(@raw_data) do |t|
+      with_temp_data_file(@raw_data) do |t|
         sizes = imagemagick_run("identify #{t.path.to_s}").split(/\n/)
         images = []
         %w(16x16 32x32 64x64).each do |dims|

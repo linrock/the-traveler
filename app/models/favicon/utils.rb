@@ -16,6 +16,19 @@ module Favicon
       text.encode("UTF-8", :invalid => :replace, :undef => :replace, :replace => '')
     end
 
+    def with_temp_data_file(data, &block)
+      begin
+        t = Tempfile.new(["favicon", ".ico"])
+        t.binmode
+        t.write data
+        t.close
+        result = block.call(t)
+      ensure
+        t.unlink
+      end
+      result
+    end
+
     extend self
   end
 
