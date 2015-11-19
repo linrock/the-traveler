@@ -16,6 +16,10 @@ module Favicon
       text.encode("UTF-8", :invalid => :replace, :undef => :replace, :replace => '')
     end
 
+    def get_mime_type(data)
+      FileMagic.new(:mime_type).buffer(data)
+    end
+
     def with_temp_data_file(data, &block)
       begin
         t = Tempfile.new(["favicon", ".ico"])

@@ -21,10 +21,6 @@ module Favicon
       @error = nil
     end
 
-    def self.get_mime_type(data)
-      FileMagic.new(:mime_type).buffer(data)
-    end
-
     def imagemagick_run(cmd, binmode = false)
       stdin, stdout, stderr, t = Open3.popen3(cmd)
       stdout.binmode if binmode
@@ -36,7 +32,7 @@ module Favicon
     end
 
     def mime_type
-      self.class.get_mime_type(@raw_data)
+      get_mime_type(@raw_data)
     end
 
     def identify
