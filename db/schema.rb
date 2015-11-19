@@ -11,7 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151103032430) do
+ActiveRecord::Schema.define(version: 20151118233755) do
+
+  create_table "domains", force: :cascade do |t|
+    t.string   "url",                           null: false
+    t.boolean  "visited",       default: false
+    t.boolean  "successful"
+    t.string   "error_message"
+    t.datetime "last_visit_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "domains", ["url"], name: "index_domains_on_url", unique: true
+  add_index "domains", ["visited"], name: "index_domains_on_visited"
 
   create_table "favicon_snapshots", force: :cascade do |t|
     t.string   "query_url",   null: false
