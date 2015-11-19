@@ -3,8 +3,10 @@ class Domain < ActiveRecord::Base
 
   after_initialize :normalize_url
 
-  def self.uncharted(n)
-    where(:visited => false).order('id ASC').limit(n)
+  def self.uncharted(n = nil)
+    domains = where(:visited => false).order('id ASC')
+    return domains if n.nil?
+    domains.limit(n)
   end
 
   def visit!
@@ -25,7 +27,7 @@ class Domain < ActiveRecord::Base
     if self.url !~ /\Ahttps?:\/\//
       self.url = "http://#{self.url}"
     end
-    self.url = URI.parse(url).hostname.downcase
+    self.url = URI.encode(URI.parse(url).hostname.downcase)
   end
 
 end

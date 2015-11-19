@@ -5,20 +5,20 @@ class Scout
 
   LOG_FILE        = "log/scout.log"
   BEANSTALK_HOST  = "localhost:11300"
-  BEANSTALK_TUBE  = "domains_to_visit"
   MAX_QUEUE_SIZE  = 20000
+  OUTPUT_TUBE     = "domains_to_visit"
 
   def initialize
     @logger = ColorizedLogger.new(LOG_FILE)
     @beanstalk = Beaneater.new(BEANSTALK_HOST)
-    @tube = @beanstalk.tubes[BEANSTALK_TUBE]
+    @tube = @beanstalk.tubes[OUTPUT_TUBE]
   end
 
   def process_domain(domain)
-    @logger.log "Visiting #{domain.url}"
+    @logger.log "Visiting - #{domain.url}"
     html = domain.visit!
     if domain.error_message
-      @logger.error "Failed: #{domain.error_message}"
+      @logger.log "Failed: #{domain.error_message}", :color => :yellow
       return
     end
     enqueue_url domain.url
@@ -36,7 +36,7 @@ class Scout
         i += 1
       end
     end
-    @logger.log "Found #{i} uncharted out of #{urls.length} domains"
+    @logger.log "Found #{i} new domains out of #{urls.length}"
   end
 
   def visit_uncharted_domains(n = 50)
@@ -53,6 +53,11 @@ class Scout
                 select {|href| (href =~ /\Ahttps?:\/\//) rescue nil }.
                 map    {|href| URI.parse(href).hostname.downcase rescue nil }.
                 compact.uniq
+  end
+
+  def status_update
+    stats = "#uncharted: #{Domain.uncharted.count}, #enqueued: #{queue_size}"
+    @logger.log "Status update - #{stats}", :color => :cyan
   end
 
   def enqueue_url(url, priority = 10)
@@ -75,6 +80,7 @@ class Scout
         next
       end
       visit_uncharted_domains
+      status_update
     end
   ensure
     @beanstalk.close
