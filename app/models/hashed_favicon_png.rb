@@ -16,6 +16,10 @@ class HashedFaviconPng < ActiveRecord::Base
     create!({ :png_data => data })
   end
 
+  def size
+    png_data.size
+  end
+
   def set_md5_hash
     self.md5_hash = Digest::MD5.hexdigest self.png_data
   end

@@ -1,5 +1,8 @@
 class Traveler::Directions::Beanstalkd
 
+  INPUT_TUBE = "domains_to_visit"
+
+
   # Tracks # sequential errors to determine how many
   # urls to be skipped
   #
@@ -43,7 +46,7 @@ class Traveler::Directions::Beanstalkd
     @traveler = traveler
     @logger = traveler.logger
     @beanstalk = Beaneater.new('localhost:11300')
-    @tube = @beanstalk.tubes["favicon_urls"]
+    @tube = @beanstalk.tubes[INPUT_TUBE]
     @evader = ErrorEvader.new(@tube)
   end
 
