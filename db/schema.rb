@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151118233755) do
+ActiveRecord::Schema.define(version: 20151119051316) do
 
   create_table "domains", force: :cascade do |t|
     t.string   "url",                           null: false
@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(version: 20151118233755) do
   add_index "domains", ["visited"], name: "index_domains_on_visited"
 
   create_table "favicon_snapshots", force: :cascade do |t|
-    t.string   "query_url",   null: false
+    t.string   "query_url",             null: false
     t.string   "final_url"
     t.string   "favicon_url"
     t.integer  "flags"
@@ -35,8 +35,19 @@ ActiveRecord::Schema.define(version: 20151118233755) do
     t.binary   "png_data"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "hashed_favicon_png_id"
   end
 
+  add_index "favicon_snapshots", ["hashed_favicon_png_id"], name: "index_favicon_snapshots_on_hashed_favicon_png_id"
   add_index "favicon_snapshots", ["query_url"], name: "index_favicon_snapshots_on_query_url"
+
+  create_table "hashed_favicon_pngs", force: :cascade do |t|
+    t.string   "md5_hash",   null: false
+    t.binary   "png_data"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "hashed_favicon_pngs", ["md5_hash"], name: "index_hashed_favicon_pngs_on_md5_hash", unique: true
 
 end
