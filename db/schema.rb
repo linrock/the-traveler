@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151119051316) do
+ActiveRecord::Schema.define(version: 20151119055519) do
 
   create_table "domains", force: :cascade do |t|
     t.string   "url",                           null: false
@@ -32,7 +32,6 @@ ActiveRecord::Schema.define(version: 20151119051316) do
     t.string   "favicon_url"
     t.integer  "flags"
     t.binary   "raw_data"
-    t.binary   "png_data"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "hashed_favicon_png_id"
