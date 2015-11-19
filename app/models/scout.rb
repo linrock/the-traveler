@@ -32,7 +32,9 @@ class Scout
       urls.each do |url|
         domain = Domain.find_by(:url => url)
         next if domain.present?
-        Domain.create!(:url => url)
+        domain = Domain.new(:url => url)
+        next unless domain.valid?
+        domain.save!
         i += 1
       end
     end
