@@ -1,3 +1,5 @@
+# The Traveler visits domains and attempts to save their favicons
+#
 class Traveler
 
   # STATUSES = ["active", "resting", "inactive"]

@@ -8,7 +8,6 @@ module Favicon
   class Fetcher
     include Favicon::Utils
 
-    TIMEOUT = 5
     ICON_SELECTORS = [ 'link[rel="shortcut icon"]',
                        'link[rel="icon"]',
                        'link[type="image/x-icon"]',
@@ -19,7 +18,7 @@ module Favicon
     attr_accessor :query_url, :final_url, :favicon_url, :candidate_urls, :html, :data
 
     def initialize(url)
-      @query_url = prefix_url(url)
+      @query_url = Favicon::Utils.prefix_url(url)
       @final_url = nil
       @favicon_url = nil
       @html = nil
@@ -34,18 +33,7 @@ module Favicon
     # Encodes output as utf8 - Not for binary http responses
     #
     def http_get(url)
-      stdin, stdout, stderr, t = Open3.popen3(curl_cmd(url))
-      output = encode_utf8(stdout.read).strip
-      if (err = stderr.read.strip).present?
-        if err.include? "SSL"
-          raise Favicon::Curl::SSLError.new(err)
-        elsif err.include? "Couldn't resolve host"
-          raise Favicon::Curl::DNSError.new(err)
-        else
-          raise Favicon::CurlError.new(err)
-        end
-      end
-      output
+      Favicon::HTTPClient.get(url)
     end
 
     def fetch
@@ -84,7 +72,7 @@ module Favicon
         elsif href =~ /\.png/
           1
         else
-          3
+          2
         end
       }
       uri = URI @final_url
@@ -106,8 +94,8 @@ module Favicon
     # Follow redirects from the query url to get to the last url
     #
     def set_final_url
-      output = `curl -sIL -1 -m #{TIMEOUT} "#{@query_url}"`
-      final = encode_utf8(output).scan(/\ALocation: (.*)/)[-1]
+      output = Favicon::HTTPClient.head(@query_url)
+      final = output.scan(/\ALocation: (.*)/)[-1]
       final_url = final && final[0].strip
       if final_url.present?
         if final_url.starts_with? "http"
@@ -133,7 +121,7 @@ module Favicon
         data = url.split(',')[1]
         return data && Base64.decode64(data)
       end
-      `#{curl_cmd(url)} 2>/dev/null`
+      Favicon::HTTPClient.bin_get url
     end
 
     def get_urls

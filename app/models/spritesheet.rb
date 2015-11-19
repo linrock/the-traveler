@@ -2,17 +2,18 @@ class Spritesheet
 
   attr_accessor :urls, :sprites, :updated_at
 
-  def initialize
+  def initialize(favicon_snapshots)
+    @favicon_snapshots = favicon_snapshots
     @sprites = []
   end
 
   def regenerate
-    dir = "/tmp/ffetcher/favicons"
-    `mkdir -p #{dir}`
+    tmp_dir = "/tmp/ffetcher/favicons"
+    `mkdir -p #{tmp_dir}`
     image_filenames = []
-    Favicon::Cache.get_cached_favicon_urls.each_with_index do |url, i|
-      favicon_data = Favicon::Cache.new(url).get 
-      png_filename = "#{dir}/#{subbed_url(url)}.png"
+    @favicon_snapshots.each_with_index do |favicon, i|
+      png_data = favicon.png_data
+      png_filename = "#{tmp_dir}/#{subbed_url(url)}.png"
       image_filenames << png_filename
       sprite = {
         :url        => url,
@@ -20,12 +21,12 @@ class Spritesheet
         :css_rule   => "background-position: -#{16 * i}px 0;"
       }
       @sprites << sprite
-      open(png_filename, "wb") {|f| f.write favicon_data }
+      open(png_filename, "wb") {|f| f.write png_data }
     end
-    merged_image = "#{dir}/favicons.png"
-    `convert #{image_filenames.join " "} -colorspace RGB +append png:#{merged_image}`
+    merged_png_filename = "#{tmp_dir}/favicons.png"
+    `convert #{image_filenames.join " "} -colorspace RGB +append png:#{merged_png_filename}`
     @updated_at = Time.now.to_i
-    `cp #{merged_image} #{Rails.root.join("app/assets/images/favicons.png")}`
+    `cp #{merged_png_filename} #{Rails.root.join("app/assets/images/favicons.png")}`
   end
 
   def regenerate_forever
