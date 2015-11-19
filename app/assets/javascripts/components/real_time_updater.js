@@ -3,76 +3,84 @@ Components.RealTimeUpdater = function() {
   const N_COLS = 5;
 
 
-  // Favicon fetcher
-  //
-  var next_id = Traveler.first_id;
-  var last_checked_id = false;
-
-  var startFetcher = function(first_id) {
-    return new RSVP.Promise(function(resolve, reject) {
-      // TODO reject if queue is too full
-      if (next_id == last_checked_id) {
-        reject("Already checked " + next_id);
-      } else if (favicon_queue.length > 50) {
-        reject("Queue is pretty full - " + favicon_queue.length);
-      } else {
-        resolve(first_id);
-      }
-    });
-  };
-
-  var fetchRecentFavicons = function(first_id) {
-    console.log("Checking for favicons since " + first_id);
-    return new RSVP.Promise(function(resolve, reject) {
-      $.ajax({
-        url: "/the-traveler/favicons?after_id=" + first_id,
-        dataType: "json",
-        success: function(data, status, xhr) {
-          var favicons = data.favicons;
-          var status = data.traveler.status;
-
-          // TODO update traveler status elsewhere
-          if (!$(".status-icon").hasClass(status)) {
-            $(".status-icon").removeClass()
-              .addClass("status-icon " + status)
-              .attr("title", "Status - " + status);
-          }
-
-          if (favicons.length > 0) {
-            next_id = _.first(favicons).id;
-            last_checked_id = first_id;
-          }
-          resolve(favicons);
-        },
-        error: function(xhr, status, error) {
-          reject(error);
-        }
-      });
-    });
-  };
-
-
   // Favicon queue
   //
   var favicon_queue = [];
 
-  var queueRecentFavicons = function(favicons) {
+  var enqueueRecentFavicons = function(favicons) {
     favicon_queue = favicon_queue.concat(favicons);
     var n = favicon_queue.length;
     console.log("Adding " + favicons.length + " favicons to queue (" + n + " total)");
   };
 
-  var pollForFavicons = function() {
-    startFetcher(next_id)
-      .then(fetchRecentFavicons)
-      .then(queueRecentFavicons)
-      .catch(function(error) {
-        console.log("Favicon polling error: " + error);
-        return true;
-      })
-      .then(function() {
-        setTimeout(pollForFavicons, 5000);
+
+  // Fetch favicons periodically, manage traveler status
+  //
+  var FaviconContentUpdater = function() {
+
+    var next_id = Traveler.first_id;
+    var last_checked_id = false;
+
+    var startFetcher = function(first_id) {
+      return new RSVP.Promise(function(resolve, reject) {
+        if (next_id == last_checked_id) {
+          reject("Already checked " + next_id);
+        } else if (favicon_queue.length > 50) {
+          reject("Queue is pretty full - " + favicon_queue.length);
+        } else {
+          resolve(first_id);
+        }
       });
+    };
+
+    var updateTravelerStatus = function(status) {
+      if (!$(".status-icon").hasClass(status)) {
+        $(".status-icon").removeClass()
+          .addClass("status-icon " + status)
+          .attr("title", "Status - " + status);
+      }
+    };
+
+    var fetchRecentFavicons = function(first_id) {
+      console.log("Checking for favicons since " + first_id);
+      return new RSVP.Promise(function(resolve, reject) {
+        $.ajax({
+          url: "/the-traveler/favicons?after_id=" + first_id,
+          dataType: "json",
+          success: function(data, status, xhr) {
+            var favicons = data.favicons;
+            var status = data.traveler.status;
+            updateTravelerStatus(status);
+            if (favicons.length > 0) {
+              next_id = _.first(favicons).id;
+              last_checked_id = first_id;
+            }
+            resolve(favicons);
+          },
+          error: function(xhr, status, error) {
+            reject(error);
+          }
+        });
+      });
+    };
+
+    var pollForFavicons = function() {
+      startFetcher(next_id)
+        .then(fetchRecentFavicons)
+        .then(enqueueRecentFavicons)
+        .catch(function(error) {
+          console.log("Favicon polling error: " + error);
+          return true;
+        })
+        .then(function() {
+          setTimeout(pollForFavicons, 5000);
+        });
+    };
+
+    return {
+      run: pollForFavicons
+    };
+
   };
 
 
@@ -106,13 +114,13 @@ Components.RealTimeUpdater = function() {
       if (direction === 0) {
         if (i === 0) {
           direction = 1;
-        } else if (i === 4) {
+        } else if (i === N_COLS - 1) {
           direction = -1;
         }
         return animateSheet();
       }
       i = i + direction;
-      if (i === 0 || i === 4) {
+      if (i === 0 || i === N_COLS - 1) {
         direction = 0;
       }
       return animateTraveler();
@@ -200,7 +208,7 @@ Components.RealTimeUpdater = function() {
 
   // init
   //
-  pollForFavicons();
+  FaviconContentUpdater().run();
   FaviconSheetAnimator().run();
 
 };
