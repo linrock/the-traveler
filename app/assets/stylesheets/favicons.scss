@@ -1,5 +1,14 @@
 body[data-controller="favicons"] {
 
+
+input[type="text"] {
+  border: 1px solid #dfdfdf;
+  font-size: 16px;
+  padding: 4px 10px;
+  width: 184px;
+  -webkit-font-smoothing: antialiased;
+}
+
 .container {
   background: white;
   width: 184 + 32px;

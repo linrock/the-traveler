@@ -11,6 +11,15 @@ $left-width: $n-cols * $f-space;
 $right-width: $container-width - $left-width;
 
 
+@mixin clearfix {
+  &:after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+
 background: white;
 
 .container {
@@ -18,14 +27,14 @@ background: white;
   margin: 0 auto;
   width: $container-width;
   padding: 0;
-  overflow: hidden;
+  @include clearfix();
 }
 
 .the-trail {
   float: left;
   width: $left-width;
   margin: 75px 0;
-  overflow: hidden;
+  @include clearfix();
 }
 
 .the-traveler {
@@ -72,11 +81,11 @@ background: white;
 
 .favicon {
   transition: opacity 0.75s ease, transform 0.3s ease;
-  transform: scale3d(1,1,1);
+  transform: translate3d(0,0,0) scale3d(1,1,1);
 
   &.invisible {
     opacity: 0;
-    transform: scale3d(0.1,0.1,1);
+    transform: translate3d(0,-25px,0) scale3d(0.1,0.1,1);
   }
 
   @for $i from 0 through 9 {
@@ -91,8 +100,8 @@ background: white;
 
 .favicon-row {
   height: $f-space;
-  overflow: hidden;
   transition: opacity 0.15s ease;
+  @include clearfix();
 
   &.invisible {
     opacity: 0;
@@ -191,10 +200,15 @@ background: white;
 
 .description {
   float: left;
-  margin-top: 95px;
+  margin-top: 120px;
   padding: 0 60px;
   width: $right-width;
   color: #111;
+
+  .title {
+    font-size: 28px;
+    margin-bottom: 36px;
+  }
 
   .status-icon {
     display: inline-block;

@@ -18,16 +18,12 @@ module Favicon
     attr_accessor :query_url, :final_url, :favicon_url, :candidate_urls, :html, :data
 
     def initialize(url)
-      @query_url = Favicon::Utils.prefix_url(url)
-      @final_url = nil
-      @favicon_url = nil
-      @html = nil
-      @candidate_urls = []
-      @data = nil
-    end
-
-    def curl_cmd(url)
-      "curl -sL -k --compressed -m #{TIMEOUT} --ciphers 'RC4,3DES,ALL' --fail --show-error '#{url}'"
+      @query_url       = prefix_url(url)
+      @final_url       = nil
+      @favicon_url     = nil
+      @html            = nil
+      @data            = nil
+      @candidate_urls  = []
     end
 
     # Encodes output as utf8 - Not for binary http responses
@@ -76,19 +72,19 @@ module Favicon
         end
       }
       uri = URI @final_url
-      root = "#{uri.scheme}://#{uri.host}"
+      url_root = "#{uri.scheme}://#{uri.host}"
       @candidate_urls.map! do |href|
         href = URI.encode(href.strip)
         if href.starts_with? "//"
           href = "#{uri.scheme}:#{href}"
         elsif href !~ /\Ahttp/
           # Ignore invalid URLS - ex. {http://i50.tinypic.com/wbuzcn.png}
-          href = URI.join(root, href).to_s rescue nil
+          href = URI.join(url_root, href).to_s rescue nil
         end
         href
       end.compact
-      @candidate_urls << URI.join(root, "favicon.ico").to_s
-      @candidate_urls << URI.join(root, "favicon.png").to_s
+      @candidate_urls << URI.join(url_root, "favicon.ico").to_s
+      @candidate_urls << URI.join(url_root, "favicon.png").to_s
     end
 
     # Follow redirects from the query url to get to the last url
