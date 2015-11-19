@@ -80,7 +80,7 @@
 </div>
 
 <script>
-  Traveler.first_id = <%= @favicon_snapshots.first.id %>;
-  Traveler.last_id  = <%= @favicon_snapshots.last.id %>;
+  Traveler.first_id = <%= @favicon_snapshots.first ? @favicon_snapshots.first.id : 0 %>;
+  Traveler.last_id  = <%= @favicon_snapshots.last ? @favicon_snapshots.last.id : 0 %>;
   Traveler.max_rows = 120 / 5;
 </script>

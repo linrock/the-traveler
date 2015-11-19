@@ -4,8 +4,8 @@ class FaviconSnapshot < ActiveRecord::Base
   validates_format_of :query_url, :with => /\Ahttps?:\/\//
   validates_format_of :final_url, :with => /\Ahttps?:\/\//
   validates_format_of :favicon_url, :with => /\A(https?:\/\/|data:)/
-  validates_presence_of :raw_data
   validates_presence_of :hashed_favicon_png
+  validate :validate_raw_data
 
   belongs_to :hashed_favicon_png
 
@@ -89,6 +89,12 @@ class FaviconSnapshot < ActiveRecord::Base
     t.write png_data
     t.flush
     t
+  end
+
+  def validate_raw_data
+    unless Favicon::Data.new(raw_data).valid?
+      errors.add :raw_data, "is invalid"
+    end
   end
 
 end

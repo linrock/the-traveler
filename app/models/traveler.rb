@@ -2,7 +2,7 @@
 #
 class Traveler
 
-  # STATUSES = ["active", "resting", "inactive"]
+  STATUSES = ["active", "resting", "inactive"]
 
   attr_reader :logger, :directions
 
@@ -16,6 +16,7 @@ class Traveler
   end
 
   def set_status(status)
+    return unless STATUSES.include? status
     Rails.cache.write("traveler:status", status)
   end
 

@@ -8,10 +8,11 @@ class Scout
   MAX_QUEUE_SIZE  = 20000
   OUTPUT_TUBE     = "domains_to_visit"
 
-  def initialize
+  def initialize(url = nil)
     @logger = ColorizedLogger.new(LOG_FILE)
     @beanstalk = Beaneater.new(BEANSTALK_HOST)
     @tube = @beanstalk.tubes[OUTPUT_TUBE]
+    find_unique_domains_from_url(url) if url.present?
   end
 
   def process_domain(domain)
