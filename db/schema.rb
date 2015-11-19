@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151119055519) do
+ActiveRecord::Schema.define(version: 20151119183321) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -19,7 +19,7 @@ ActiveRecord::Schema.define(version: 20151119055519) do
   create_table "domains", force: :cascade do |t|
     t.string   "url",                           null: false
     t.boolean  "visited",       default: false
-    t.boolean  "successful"
+    t.boolean  "accessed"
     t.string   "error_message"
     t.datetime "last_visit_at"
     t.datetime "created_at"
