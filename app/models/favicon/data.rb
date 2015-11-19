@@ -32,9 +32,7 @@ module Favicon
     end
 
     def self.get_mime_type(data)
-      with_temp_data_file(data) do |t|
-        `file -b --mime-type #{t.path.to_s}`.strip
-      end
+      FileMagic.new(:mime_type).buffer(data)
     end
 
     def imagemagick_run(cmd, binmode = false)
