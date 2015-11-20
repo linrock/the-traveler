@@ -23,7 +23,7 @@ class Scout
       wait_for_available_dns if domain.dns_error?
       return
     end
-    enqueue_url domain.url
+    emit_url domain.url
     urls = find_unique_domains_in_html(html)
     save_uncharted_domains urls
   end
@@ -72,12 +72,12 @@ class Scout
     end
   end
 
-  def status_update
+  def send_status_update
     stats = "#uncharted: #{Domain.uncharted.count}, #enqueued: #{queue_size}"
     @logger.log "Status update - #{stats}", :color => :cyan
   end
 
-  def enqueue_url(url, priority = 10)
+  def emit_url(url, priority = 10)
     @tube.put url, :pri => priority
   end
 
@@ -89,19 +89,24 @@ class Scout
     queue_size > MAX_QUEUE_SIZE
   end
 
+  def wait_for_opportunity
+    return unless queue_is_fat?
+    sleep(60)
+    wait_for_opportunity
+  end
+
   def explore!
     if Domain.uncharted.count == 0
       @logger.log "No more domains to visit. Exiting"
       exit 1
     end
+    if queue_is_fat?
+      @logger.log "Taking a break - queue is pretty full (#{queue_size})"
+    end
     loop do
-      if queue_is_fat?
-        @logger.log "Taking a break - queue is pretty full (#{queue_size})"
-        sleep(60)
-        next
-      end
+      wait_for_opportunity
       visit_uncharted_domains
-      status_update
+      send_status_update
       sleep 2
     end
   ensure
