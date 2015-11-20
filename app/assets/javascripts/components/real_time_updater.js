@@ -45,7 +45,7 @@ Components.RealTimeUpdater = function() {
       console.log("Checking for favicons since " + first_id);
       return new RSVP.Promise(function(resolve, reject) {
         $.ajax({
-          url: "/the-traveler/favicons?after_id=" + first_id,
+          url: "/the-traveler/updates?after_id=" + first_id,
           dataType: "json",
           success: function(data, status, xhr) {
             var favicons = data.favicons;

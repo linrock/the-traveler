@@ -4,6 +4,6 @@ Rails.application.routes.draw do
   get  'favicons'              => 'favicons#show'
 
   get  'the-traveler'          => 'traveler#index'
-  get  'the-traveler/favicons' => 'traveler#favicons'
+  get  'the-traveler/updates'  => 'polling#updates'
 
 end
