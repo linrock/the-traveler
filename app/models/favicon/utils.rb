@@ -16,8 +16,12 @@ module Favicon
       text.encode("UTF-8", :invalid => :replace, :undef => :replace, :replace => '')
     end
 
-    def get_mime_type(data)
-      FileMagic.new(:mime_type).buffer(data)
+    def get_mime_type(data, use_file_cmd = true)
+      if use_file_cmd
+        with_temp_data_file(data) {|t| `file -b --mime-type #{t.path.to_s}`.strip }
+      else
+        FileMagic.new(:mime_type).buffer(data)
+      end
     end
 
     def with_temp_data_file(data, &block)
