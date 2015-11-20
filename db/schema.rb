@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151119183321) do
+ActiveRecord::Schema.define(version: 20151120050145) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -51,5 +51,14 @@ ActiveRecord::Schema.define(version: 20151119183321) do
   end
 
   add_index "hashed_favicon_pngs", ["md5_hash"], name: "index_hashed_favicon_pngs_on_md5_hash", unique: true, using: :btree
+
+  create_table "hashed_favicon_sources", force: :cascade do |t|
+    t.string   "md5_hash",    null: false
+    t.binary   "source_data"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "hashed_favicon_sources", ["md5_hash"], name: "index_hashed_favicon_sources_on_md5_hash", unique: true, using: :btree
 
 end
