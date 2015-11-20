@@ -25,7 +25,7 @@ class Traveler
     if (fetcher = options[:fetcher]).present?
       state.merge! fetcher.get_urls
       if fetcher.has_data?
-        state[:base64_favicon_data] = fetcher.data.base64_raw_data
+        state[:base64_favicon_data] = fetcher.data.base64_source_data
       end
     end
     if (error = options[:error]).present?

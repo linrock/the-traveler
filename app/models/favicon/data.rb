@@ -13,10 +13,10 @@ module Favicon
     #
     STDEV_THRESHOLD = 0.005
 
-    attr_accessor :raw_data, :png_data, :error
+    attr_accessor :source_data, :png_data, :error
 
-    def initialize(raw_data)
-      @raw_data = raw_data
+    def initialize(source_data)
+      @source_data = source_data
       @png_data = nil
       @error = nil
     end
@@ -32,11 +32,11 @@ module Favicon
     end
 
     def mime_type
-      get_mime_type(@raw_data)
+      get_mime_type(@source_data)
     end
 
     def identify
-      with_temp_data_file(@raw_data) do |t|
+      with_temp_data_file(@source_data) do |t|
         imagemagick_run("identify #{t.path.to_s}")
       end
     end
@@ -45,19 +45,19 @@ module Favicon
     #
     def valid?
       if blank?
-        @error = "raw_data is blank"
+        @error = "source_data is blank"
         return false
       end
       if invalid_mime_type?
-        @error = "raw_data mime-type is invalid - #{mime_type}"
+        @error = "source_data mime-type is invalid - #{mime_type}"
         return false
       end
       if transparent?
-        @error = "raw_data is a transparent image"
+        @error = "source_data is a transparent image"
         return false
       end
       if one_pixel?
-        @error = "raw_data is a 1x1 image"
+        @error = "source_data is a 1x1 image"
         return false
       end
       if one_color?
@@ -68,7 +68,7 @@ module Favicon
     end
 
     def blank?
-      @raw_data.length <= 1
+      @source_data.length <= 1
     end
 
     def invalid_mime_type?
@@ -76,7 +76,7 @@ module Favicon
     end
 
     def transparent?
-      with_temp_data_file(@raw_data) do |t|
+      with_temp_data_file(@source_data) do |t|
         cmd = "convert #{t.path.to_s} -channel a -negate -format '%[mean]' info:"
         imagemagick_run(cmd).to_i == 0
       end
@@ -99,14 +99,14 @@ module Favicon
     end
 
     def n_colors
-      with_temp_data_file(@raw_data) do |t|
+      with_temp_data_file(@source_data) do |t|
         cmd = "identify -format '%k' #{t.path.to_s}"
         imagemagick_run(cmd).to_i
       end
     end
 
     def dimensions
-      with_temp_data_file(@raw_data) do |t|
+      with_temp_data_file(@source_data) do |t|
         cmd = "convert #{t.path.to_s}[0] -format '%wx%h' info:"
         imagemagick_run(cmd)
       end
@@ -114,17 +114,17 @@ module Favicon
 
     # number of bytes in the raw data
     def size
-      @raw_data.size
+      @source_data.size
     end
 
     def info_str
       "#{mime_type}, #{dimensions}, #{size} bytes"
     end
 
-    # Export raw_data as a 16x16 png
+    # Export source_data as a 16x16 png
     def to_png
       return @png_data if @png_data.present?
-      with_temp_data_file(@raw_data) do |t|
+      with_temp_data_file(@source_data) do |t|
         sizes = imagemagick_run("identify #{t.path.to_s}").split(/\n/)
         images = []
         %w(16x16 32x32 64x64).each do |dims|
@@ -141,8 +141,8 @@ module Favicon
       end
     end
 
-    def base64_raw_data
-      Base64.encode64(@raw_data).split(/\s+/).join
+    def base64_source_data
+      Base64.encode64(@source_data).split(/\s+/).join
     end
 
     def base64_png
@@ -150,7 +150,7 @@ module Favicon
     end
 
     def inspect
-      "#<Favicon::Data @size=#{@raw_data.nil? ? nil : @raw_data.size}>"
+      "#<Favicon::Data @size=#{@source_data.nil? ? nil : @source_data.size}>"
     end
 
   end

@@ -1,9 +1,9 @@
-# Hashed/de-duplicated 16x16 PNG versions of the raw favicons
+# Hashed/de-duplicated 16x16 PNG versions of the source favicons
 #
 class HashedFaviconPng < ActiveRecord::Base
   has_many :favicon_snapshots
 
-  before_validation :set_md5_hash
+  before_validation :calculate_and_set_md5_hash
   validates_format_of :md5_hash, :with => /[\da-f]{32}/
   validate :validate_png_data
 
@@ -22,12 +22,12 @@ class HashedFaviconPng < ActiveRecord::Base
     png_data.size
   end
 
-  def set_md5_hash
+  def calculate_and_set_md5_hash
     self.md5_hash = Digest::MD5.hexdigest self.png_data
   end
 
   def validate_png_data
-    mime_type = FileMagic.new(:mime_type).buffer(png_data)
+    mime_type = Favicon::Utils.get_mime_type(png_data)
     if mime_type != "image/png"
       errors.add :png_data, "mime type is invalid - #{mime_type}"
     end

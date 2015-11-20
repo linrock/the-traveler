@@ -45,14 +45,15 @@ Known issues:
   * http://shop.patheos.com      - no favicon, but an empty one is saved
   * http://www.thejohnwilkesclub.com - no favicon (404), but an empty one is saved
 
-* Handle favicons incorrectly saved as blank
-  * http://realclimate.org         - saved as transparent, but favicon exists
-  * http://www.lionpublishers.com  - saved as blank, but site has a favicon
-  * http://www.ninepearls.com      - redirects to hugedomains.com, which has a favicon
-  * http://www.mcfreedom.com       - redirects to hugedomains.com, but saved as white
-  * http://faultline.org           - should have a favicon, but given a perceptually gray one
-  * http://www.smartnewmedia.net   - should have a favicon
-  * http://www.gfang.cn            - has favicon, but saved as white/blank
+* Handle favicons incorrectly saved as blank/weird
+  * http://realclimate.org            - saved as transparent, but favicon exists
+  * http://www.lionpublishers.com     - saved as blank, but site has a favicon
+  * http://www.ninepearls.com         - redirects to hugedomains.com, which has a favicon
+  * http://www.mcfreedom.com          - redirects to hugedomains.com, but saved as white
+  * http://faultline.org              - should have a favicon, but given a perceptually gray one
+  * http://www.smartnewmedia.net      - should have a favicon
+  * http://www.gfang.cn               - has favicon, but saved as white/blank
+  * http://www.craftbyundermyhost.com - has a favicon, but saved as a blank with green corners
 
 * Don't save transparent favicons
   * http://allspinzone.com         - transparent favicon
