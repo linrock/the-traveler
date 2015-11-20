@@ -82,5 +82,5 @@
 <script>
   Traveler.first_id = <%= @favicon_snapshots.first ? @favicon_snapshots.first.id : 0 %>;
   Traveler.last_id  = <%= @favicon_snapshots.last ? @favicon_snapshots.last.id : 0 %>;
-  Traveler.max_rows = 120 / 5;
+  Traveler.max_rows = <%= FaviconSnapshot::N_PER_PAGE / 5 %>;
 </script>

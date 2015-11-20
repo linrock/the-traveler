@@ -10,6 +10,8 @@ class FaviconSnapshot < ActiveRecord::Base
   belongs_to :hashed_favicon_source
   belongs_to :hashed_favicon_png
 
+  N_PER_PAGE = 100
+
   class << self
 
     def most_recent_for_query(query_url)
@@ -38,15 +40,15 @@ class FaviconSnapshot < ActiveRecord::Base
     alias_method :lookup!, :find_or_fetch!
 
     def get_recent_favicons
-      includes(:hashed_favicon_png).order("id DESC").limit(120)
+      includes(:hashed_favicon_png).order("id DESC").limit(N_PER_PAGE)
     end
 
     def get_favicons_before(id)
-      includes(:hashed_favicon_png).where("id < ?", id).order("id DESC").limit(120)
+      includes(:hashed_favicon_png).where("id < ?", id).order("id DESC").limit(N_PER_PAGE)
     end
 
     def get_favicons_after(id)
-      includes(:hashed_favicon_png).where("id > ?", id).order("id DESC").limit(120)
+      includes(:hashed_favicon_png).where("id > ?", id).order("id DESC").limit(N_PER_PAGE)
     end
 
   end
