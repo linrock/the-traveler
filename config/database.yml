@@ -23,5 +23,5 @@ test:
 production:
   <<: *default
   database: the_traveler_production
-  username: the_traveler
+  username: rails
   password: <%= ENV['THE_TRAVELER_DATABASE_PASSWORD']
