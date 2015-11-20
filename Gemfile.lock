@@ -155,7 +155,7 @@ GEM
     uglifier (2.7.2)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
-    unicorn (4.9.0)
+    unicorn (5.0.1)
       kgio (~> 2.6)
       rack
       raindrops (~> 0.7)
@@ -164,10 +164,10 @@ GEM
       binding_of_caller (>= 0.7.2)
       railties (>= 4.0)
       sprockets-rails (>= 2.0, < 4.0)
-    yahns (1.9.0)
+    yahns (1.10.0)
       kgio (~> 2.9)
       sleepy_penguin (~> 3.2)
-      unicorn (~> 4.6, >= 4.6.3)
+      unicorn (>= 4.6.3, < 6.0)
 
 PLATFORMS
   ruby
