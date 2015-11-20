@@ -81,8 +81,10 @@ class Traveler::Directions::Beanstalkd
             :error   => error
           })
           @traveler.write_state_as_fixture(state)
-          binding.pry
-          add_url url, 1
+          unless Rails.env.production?
+            binding.pry
+            add_url url, 1
+          end
         end
         @traveler.set_status "active"
       ensure
