@@ -25,7 +25,7 @@ background: white;
 
 .container {
   background: none;
-  margin: 0 auto;
+  margin: 75px auto;
   width: $container-width;
   padding: 0;
   @include clearfix();
@@ -34,7 +34,6 @@ background: white;
 .the-trail {
   float: left;
   width: $left-width;
-  margin: 75px 0;
   @include clearfix();
 }
 
@@ -202,13 +201,13 @@ background: white;
 
 .description {
   float: left;
-  margin-top: 120px;
-  padding: 0 60px;
+  margin-top: 45px;
+  padding-left: 60px;
   width: $right-width;
   color: #111;
 
   .title {
-    font-size: 28px;
+    font-size: 26px;
     margin-bottom: 36px;
   }
 
@@ -218,7 +217,7 @@ background: white;
     width: 10px;
     height: 10px;
     position: relative;
-    top: -3px;
+    top: -2px;
     left: 12px;
 
     &.active {
@@ -268,19 +267,31 @@ background: white;
 
 }
 
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 768px) {
 
   .container {
+    width: 410px;
+    padding: 0 25px;
+    margin: 50px auto;
+  }
+
+  .description {
     width: auto;
   }
 
-  .favicons {
-    float: none;
-    margin: 75px auto;
+}
+
+@media screen and (max-width: 640px) {
+
+  .container {
+    width: 385px;
+    padding: 0 25px;
+    margin: 50px auto;
   }
 
-  .messages {
-    display: none;
+  .description {
+    padding-left: 35px;
+    width: auto;
   }
 
 }
