@@ -129,7 +129,7 @@ module Favicon
     end
 
     def has_data?
-      @data.present? && @data.source_data.present?
+      @data.present? && !@data.blank?
     end
 
   end
