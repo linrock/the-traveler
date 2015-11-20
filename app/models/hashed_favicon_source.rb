@@ -15,7 +15,7 @@ class HashedFaviconSource < ActiveRecord::Base
   def self.find_or_create_by_source_data(data)
     hashed_favicon_source = find_by_source_data(data)
     return hashed_favicon_source if hashed_favicon_source.present?
-    create!({ :png_data => data })
+    create!({ :source_data => data })
   end
 
   def size
@@ -23,7 +23,7 @@ class HashedFaviconSource < ActiveRecord::Base
   end
 
   def calculate_and_set_md5_hash
-    self.md5_hash = Digest::MD5.hexdigest self.png_data
+    self.md5_hash = Digest::MD5.hexdigest self.source_data
   end
 
   def validate_source_data

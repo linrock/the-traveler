@@ -4,9 +4,10 @@ class FaviconSnapshot < ActiveRecord::Base
   validates_format_of :query_url, :with => /\Ahttps?:\/\//
   validates_format_of :final_url, :with => /\Ahttps?:\/\//
   validates_format_of :favicon_url, :with => /\A(https?:\/\/|data:)/
+  validates_presence_of :hashed_favicon_source
   validates_presence_of :hashed_favicon_png
-  validate :validate_source_data
 
+  belongs_to :hashed_favicon_source
   belongs_to :hashed_favicon_png
 
   class << self
@@ -53,7 +54,7 @@ class FaviconSnapshot < ActiveRecord::Base
   def init_from_fetcher_results
     data = fetcher.fetch
     self.attributes = fetcher.get_urls
-    self.source_data = data.source_data
+    self.hashed_favicon_source = HashedFaviconSource.find_or_create_by_source_data(data.source_data)
     self.hashed_favicon_png = HashedFaviconPng.find_or_create_by_png_data(data.png_data)
     self
   end
@@ -69,6 +70,10 @@ class FaviconSnapshot < ActiveRecord::Base
 
   def data
     Favicon::Data.new(source_data)
+  end
+
+  def source_data
+    self.hashed_favicon_source.source_data
   end
 
   def png_data
@@ -93,12 +98,6 @@ class FaviconSnapshot < ActiveRecord::Base
     t.write png_data
     t.flush
     t
-  end
-
-  def validate_source_data
-    unless Favicon::Data.new(source_data).valid?
-      errors.add :source_data, "is invalid"
-    end
   end
 
 end
