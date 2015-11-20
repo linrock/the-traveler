@@ -63,6 +63,10 @@ class FaviconSnapshot < ActiveRecord::Base
     @fetcher = Favicon::Fetcher.new(self.query_url)
   end
 
+  def fetch
+    fetcher.fetch
+  end
+
   def data
     Favicon::Data.new(raw_data)
   end
