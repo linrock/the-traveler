@@ -39,6 +39,10 @@ class FaviconSnapshot < ActiveRecord::Base
     end
     alias_method :lookup!, :find_or_fetch!
 
+    def most_recent
+      order("id DESC").first
+    end
+
     def get_recent_favicons
       includes(:hashed_favicon_png).order("id DESC").limit(N_PER_PAGE)
     end
@@ -48,7 +52,7 @@ class FaviconSnapshot < ActiveRecord::Base
     end
 
     def get_favicons_after(id)
-      includes(:hashed_favicon_png).where("id > ?", id).order("id DESC").limit(N_PER_PAGE)
+      includes(:hashed_favicon_png).where("id > ?", id).order("id ASC").limit(N_PER_PAGE)
     end
 
   end
@@ -82,10 +86,6 @@ class FaviconSnapshot < ActiveRecord::Base
     self.hashed_favicon_png.png_data
   end
 
-  def favicon_data_uri
-    "data:image/png;base64,#{Base64.encode64(png_data).split(/\s+/).join}"
-  end
-
   def tmp_file_with_source_data
     t = Tempfile.new ["favicon", ".ico"]
     t.binmode
@@ -100,6 +100,15 @@ class FaviconSnapshot < ActiveRecord::Base
     t.write png_data
     t.flush
     t
+  end
+
+  def favicon_data_uri
+    "data:image/png;base64,#{Base64.encode64(png_data).split(/\s+/).join}"
+  end
+
+  def as_json(options = {})
+    super(:only    => [ :id, :query_url, :final_url, :favicon_url ],
+          :methods => [ :favicon_data_uri ])
   end
 
 end
