@@ -107,7 +107,7 @@ class FaviconSnapshot < ActiveRecord::Base
   end
 
   def as_json(options = {})
-    super(:only    => [ :id, :query_url, :final_url, :favicon_url ],
+    super(:only    => [ :id, :query_url,  ],
           :methods => [ :favicon_data_uri ])
   end
 
