@@ -68,7 +68,7 @@ module Favicon
     end
 
     def blank?
-      @source_data.length <= 1
+      @source_data.nil? || @source_data.length <= 1
     end
 
     def invalid_mime_type?
