@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151120051623) do
+ActiveRecord::Schema.define(version: 20151120054755) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(version: 20151120051623) do
   add_index "domains", ["visited"], name: "index_domains_on_visited", using: :btree
 
   create_table "favicon_snapshots", force: :cascade do |t|
-    t.string   "query_url",             null: false
+    t.string   "query_url",                null: false
     t.string   "final_url"
     t.string   "favicon_url"
     t.integer  "flags"
@@ -38,9 +38,11 @@ ActiveRecord::Schema.define(version: 20151120051623) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "hashed_favicon_png_id"
+    t.integer  "hashed_favicon_source_id"
   end
 
   add_index "favicon_snapshots", ["hashed_favicon_png_id"], name: "index_favicon_snapshots_on_hashed_favicon_png_id", using: :btree
+  add_index "favicon_snapshots", ["hashed_favicon_source_id"], name: "index_favicon_snapshots_on_hashed_favicon_source_id", using: :btree
   add_index "favicon_snapshots", ["query_url"], name: "index_favicon_snapshots_on_query_url", using: :btree
 
   create_table "hashed_favicon_pngs", force: :cascade do |t|
