@@ -88,8 +88,8 @@ Components.RealTimeUpdater = function() {
   //
   var FaviconSheetAnimator = function() {
 
-    var i = 0,
-        direction = 0;
+    var i = Traveler.i,
+        direction = Traveler.direction;
 
     var $sheet = $(".favicons .favicon-sheet"),
         $traveler = $(".the-traveler");

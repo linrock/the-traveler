@@ -61,8 +61,8 @@
 
     <div class="intro">
       wanders the web <br>
-      and creates a trail of <br>
-      the places it goes
+      and keeps a journal of <br>
+      the road it takes
     </div>
 
     <div class="status" style="display: none;">
@@ -82,4 +82,6 @@
 <script>
   Traveler.latest_id  = <%= @ids.max %>;
   Traveler.max_rows = <%= FaviconSnapshot::N_PER_PAGE / 5 %>;
+  Traveler.i = 0;
+  Traveler.direction = 0;
 </script>
