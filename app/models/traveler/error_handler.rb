@@ -57,4 +57,12 @@ class Traveler::ErrorHandler
     ignored_strs.any? {|str| @message.include? str }
   end
 
+  def export_as_fixture!
+    host = URI(@error.meta[:query_url]).host
+    file_path = Rails.root.join("test/fixtures/#{host}.json")
+    open(file_path, "w+") do |f|
+      f.write @error.to_h.to_json
+    end
+  end
+
 end

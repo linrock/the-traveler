@@ -47,7 +47,7 @@ class Traveler::Directions::Beanstalkd
     @logger = traveler.logger
     @beanstalk = Beaneater.new('localhost:11300')
     @tube = @beanstalk.tubes[INPUT_TUBE]
-    @evader = ErrorEvader.new(@tube)
+    # @evader = ErrorEvader.new(@tube)
   end
 
   def add_url(url, priority = 10)
@@ -56,44 +56,17 @@ class Traveler::Directions::Beanstalkd
 
   def follow
     @logger.log "Following urls in Beanstalkd tube - #{@tube.name}"
-    @traveler.set_status "active"
     i = 0
     loop do
       job = @tube.reserve
       url = job.body
-      @logger.log "Visiting - #{url}"
-      begin
-        snapshot = FaviconSnapshot.find_or_init_with_query(url)
-        snapshot.init_from_fetcher_results
-        if snapshot.save!
-          success_str = "Found #{snapshot.favicon_url} (#{snapshot.data.info_str})"
-          @logger.log success_str, :color => :cyan
-        end
-      rescue => error
-        error_handler = Traveler::ErrorHandler.new(error)
-        @logger.error error, :log_backtrace => error_handler.show_backtrace?
-        @evader.track_index i
-        sleep(5) if error_handler.should_delay?
-        unless error_handler.should_ignore?
-          @traveler.set_status "resting"
-          state = @traveler.export_state({
-            :fetcher => snapshot.fetcher,
-            :error   => error
-          })
-          @traveler.write_state_as_fixture(state)
-          unless Rails.env.production?
-            binding.pry
-            add_url url, 1
-          end
-        end
-        @traveler.set_status "active"
-      ensure
-        snapshot = nil
+      @traveler.visit_url(url) do |error|
+        add_url url, 1
       end
       job.delete
-      if (n = @evader.evade!)
-        @logger.log "Too many sequential errors. Evading the next #{n} urls"
-      end
+      # if (n = @evader.evade!)
+      #   @logger.log "Too many sequential errors. Evading the next #{n} urls"
+      # end
       i += 1
     end
   ensure

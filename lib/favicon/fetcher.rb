@@ -48,10 +48,17 @@ module Favicon
 
     def get_favicon_data_from_candidate_urls
       @candidate_urls.each do |url|
-        d = Favicon::Data.new(get_favicon_data_from_url(url))
-        if d.valid?
-          @favicon_url = url
-          return d
+        data = Favicon::Data.new(get_favicon_data_from_url(url))
+        begin
+          if data.valid?
+            @favicon_url = url
+            return data
+          end
+        rescue ImageMagickError => error
+          error.meta = get_urls
+          error.meta[:favicon_url] ||= url
+          error.meta[:base64_favicon_data] = data.base64_source_data
+          raise error
         end
       end
       nil
