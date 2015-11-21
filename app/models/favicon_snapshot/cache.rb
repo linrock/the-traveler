@@ -12,38 +12,40 @@ class FaviconSnapshot::Cache
   # Get the cached favicon image data
   #
   def get(favicon_id)
-    @store.read cache_key(favicon_id)
+    @cache.read cache_key(favicon_id)
   end
 
   def get_or_set(favicon_id)
-    favicon = @store.read cache_key(favicon_id)
+    favicon = @cache.read cache_key(favicon_id)
     return favicon if favicon.present?
     set favicon_id
   end
 
   def set(favicon_id)
     favicon_snapshot = FaviconSnapshot.find favicon_id
-    @store.write cache_key(favicon_id), favicon_snapshot.to_json
+    @cache.write cache_key(favicon_id), favicon_snapshot.as_json
   end
 
   def get_multi(favicon_ids)
-    @cache.read_multi favicon_ids.map {|id| favicon_cache_key(id) }
+    results = @cache.read_multi *favicon_ids.map {|id| cache_key(id) }
+    results.map {|result| JSON.load(result[1]) }
   end
 
   def get_recent_favicons
-    get_favcions_before FaviconSnapshot.most_recent.id
+    get_favicons_before(FaviconSnapshot.most_recent.id + 1)
   end
 
   def get_favicons_before(favicon_id)
-    id_range = (favicon_id - FaviconSnapshot::N_PER_PAGE .. favicon_id)
-    favicons = get_multi id_range.reverse.to_a
+    id_range = (favicon_id - FaviconSnapshot::N_PER_PAGE .. favicon_id - 1)
+    favicons = get_multi id_range.to_a.reverse
   end
 
   def get_favicons_after(favicon_id)
-    
+    id_range = (favicon_id + 1 .. favicon_id + FaviconSnapshot::N_PER_PAGE)
+    favicons = get_multi id_range.to_a
   end
 
-  def favicon_cache_key(favicon_id)
+  def cache_key(favicon_id)
     "favicon_snapshot:#{favicon_id}"
   end
 

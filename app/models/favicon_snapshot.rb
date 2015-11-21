@@ -10,6 +10,8 @@ class FaviconSnapshot < ActiveRecord::Base
   belongs_to :hashed_favicon_source
   belongs_to :hashed_favicon_png
 
+  after_save :write_to_cache
+
   N_PER_PAGE = 100
 
   class << self
@@ -109,6 +111,10 @@ class FaviconSnapshot < ActiveRecord::Base
   def as_json(options = {})
     super(:only    => [ :id, :query_url,  ],
           :methods => [ :favicon_data_uri ])
+  end
+
+  def write_to_cache
+    FaviconSnapshot::Cache.new.set(self.id)
   end
 
 end
