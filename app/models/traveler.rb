@@ -48,13 +48,9 @@ class Traveler
     end
   end
 
-  def init_directions
-    @directions ||= Directions::Beanstalkd.new(self)
-  end
-
   def run
-    init_directions
-    @directions.follow
+    @beanstalk ||= BeanstalkFollower.new(self)
+    @beanstalk.follow
   end
 
 end

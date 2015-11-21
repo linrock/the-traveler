@@ -1,4 +1,4 @@
-class Traveler::Directions::Beanstalkd
+class Traveler::BeanstalkFollower
 
   INPUT_TUBE = "domains_to_visit"
 
@@ -47,7 +47,7 @@ class Traveler::Directions::Beanstalkd
     @logger = traveler.logger
     @beanstalk = Beaneater.new('localhost:11300')
     @tube = @beanstalk.tubes[INPUT_TUBE]
-    # @evader = ErrorEvader.new(@tube)
+    @evader = ErrorEvader.new(@tube)
   end
 
   def add_url(url, priority = 10)
@@ -62,11 +62,12 @@ class Traveler::Directions::Beanstalkd
       url = job.body
       @traveler.visit_url(url) do |error|
         add_url url, 1
+        @evader.track_index i
       end
       job.delete
-      # if (n = @evader.evade!)
-      #   @logger.log "Too many sequential errors. Evading the next #{n} urls"
-      # end
+      if (n = @evader.evade!)
+        @logger.log "Too many sequential errors. Skipping the next #{n} urls"
+      end
       i += 1
     end
   ensure
