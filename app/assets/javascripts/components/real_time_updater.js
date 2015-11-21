@@ -109,8 +109,8 @@ Components.RealTimeUpdater = function() {
             if (favicons.length > 0) {
               next_id = _.max([ _.first(favicons).id, _.last(favicons).id ]);
               last_checked_id = latest_id;
+              events.trigger("neighborhood:check");
             }
-            events.trigger("neighborhood:check");
             resolve(favicons);
           },
           error: function(xhr, status, error) {
