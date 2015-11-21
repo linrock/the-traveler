@@ -10,7 +10,7 @@ class FaviconSnapshot < ActiveRecord::Base
   belongs_to :hashed_favicon_source
   belongs_to :hashed_favicon_png
 
-  after_save :write_to_cache
+  # after_save :write_to_cache
 
   N_PER_PAGE = 100
 
@@ -114,7 +114,7 @@ class FaviconSnapshot < ActiveRecord::Base
   end
 
   def write_to_cache
-    FaviconSnapshot::Cache.new.set(self.id)
+    CacheLayer::FaviconSnapshot.new.set(self.id)
   end
 
 end

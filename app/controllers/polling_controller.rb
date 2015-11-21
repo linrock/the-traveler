@@ -16,12 +16,12 @@ class PollingController < ActionController::Metal
 
   def serve_cached_favicons?
     params[:use_cache].present?
-    true
+    false
   end
 
   def get_favicon_snapshots
     source = if serve_cached_favicons?
-               FaviconSnapshot::Cache.new
+               CacheLayer::RangeQueries.new
              else
                FaviconSnapshot
              end
