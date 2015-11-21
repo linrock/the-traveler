@@ -86,7 +86,7 @@ background: white;
 
   &.invisible {
     opacity: 0;
-    transform: translate3d(0,-30px,0) scale3d(0.1,0.1,1);
+    transform: translate3d(0,-35px,0) scale3d(0.1,0.1,1);
   }
 
   @for $i from 0 through 9 {
@@ -128,7 +128,7 @@ background: white;
   top: -$f-space;
   z-index: 10;
 
-  $fader-height: 4 * $f-space;
+  $fader-height: 5 * $f-space;
 
   .favicon-fade {
     position: absolute;
@@ -182,14 +182,10 @@ background: white;
   z-index: 10;
 
   .favicon-ghost {
-    background: #fcfcfc;
+    background: #fff;
 
     &.lighter {
       background: #fdfdfd;
-    }
-
-    &.clear {
-      background: transparent;
     }
 
   }
