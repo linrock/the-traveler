@@ -78,12 +78,14 @@ Known issues:
   * http://xosippin.tumblr.com     - solid gray
   * http://www.tv3.ie              - solid white
 
+* White on transparent favicons don't show up
+  * White-outlined hexagon shape on a transparent background
+    * http://38.media.tumblr.com/avatar_f3c5744b8cf2_128.png
 
 * Don't get stuck in a range of broken subdomains
   * ex. yueyang.pztuan.com
   * Track status of visiting a recent set of subdomains
   * Intelligently ignore subdomains with high error rates
-
 
 * Invalid image data
   * http://www.area17.com/ - imagemagick fails to parse this, but Chrome displays the favicon correctly
