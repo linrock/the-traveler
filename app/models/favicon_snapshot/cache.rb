@@ -12,6 +12,7 @@ class FaviconSnapshot::Cache
   # Get the cached favicon image data
   #
   def get(favicon_id)
+    favicon_id = favicon_id.to_i
     @cache.read cache_key(favicon_id)
   end
 
@@ -22,13 +23,13 @@ class FaviconSnapshot::Cache
   end
 
   def set(favicon_id)
-    favicon_snapshot = FaviconSnapshot.find favicon_id
+    favicon_snapshot = FaviconSnapshot.find favicon_id.to_i
     @cache.write cache_key(favicon_id), favicon_snapshot.as_json
   end
 
   def get_multi(favicon_ids)
     results = @cache.read_multi *favicon_ids.map {|id| cache_key(id) }
-    results.map {|result| JSON.load(result[1]) }
+    results.map(&:last)
   end
 
   def get_recent_favicons
@@ -36,13 +37,19 @@ class FaviconSnapshot::Cache
   end
 
   def get_favicons_before(favicon_id)
+    favicon_id = favicon_id.to_i
     id_range = (favicon_id - FaviconSnapshot::N_PER_PAGE .. favicon_id - 1)
     favicons = get_multi id_range.to_a.reverse
   end
 
   def get_favicons_after(favicon_id)
+    favicon_id = favicon_id.to_i
     id_range = (favicon_id + 1 .. favicon_id + FaviconSnapshot::N_PER_PAGE)
     favicons = get_multi id_range.to_a
+  end
+
+  def repopulate_with_recent_favicons
+    FaviconSnapshot.get_recent_favicons.each {|favicon| set favicon.id }
   end
 
   def cache_key(favicon_id)

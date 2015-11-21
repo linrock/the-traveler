@@ -8,8 +8,8 @@ class Traveler
   attr_reader :logger
 
   def initialize
-    @logger = ColorizedLogger.new("log/traveler.log")
     @directions = nil
+    @logger = ColorizedLogger.new("log/traveler.log")
   end
 
   def status
@@ -49,8 +49,8 @@ class Traveler
   end
 
   def run
-    @beanstalk ||= BeanstalkFollower.new(self)
-    @beanstalk.follow
+    @directions ||= BeanstalkFollower.new(self)
+    @directions.follow
   end
 
 end
