@@ -18,17 +18,17 @@ Components.RealTimeUpdater = function() {
   //
   var FaviconContentUpdater = function() {
 
-    var next_id = Traveler.first_id;
+    var next_id = Traveler.latest_id;
     var last_checked_id = false;
 
-    var startFetcher = function(first_id) {
+    var startFetcher = function(latest_id) {
       return new RSVP.Promise(function(resolve, reject) {
         if (next_id == last_checked_id) {
           reject("Already checked " + next_id);
         } else if (favicon_queue.length > 50) {
           reject("Queue is pretty full - " + favicon_queue.length);
         } else {
-          resolve(first_id);
+          resolve(latest_id);
         }
       });
     };
@@ -41,19 +41,19 @@ Components.RealTimeUpdater = function() {
       }
     };
 
-    var fetchRecentFavicons = function(first_id) {
-      console.log("Checking for favicons since " + first_id);
+    var fetchRecentFavicons = function(latest_id) {
+      console.log("Checking for favicons since " + latest_id);
       return new RSVP.Promise(function(resolve, reject) {
         $.ajax({
-          url: "/the-traveler/updates?after_id=" + first_id,
+          url: "/the-traveler/updates?after_id=" + latest_id,
           dataType: "json",
           success: function(data, status, xhr) {
             var favicons = data.favicons;
             var status = data.traveler.status;
             updateTravelerStatus(status);
             if (favicons.length > 0) {
-              next_id = _.first(favicons).id;
-              last_checked_id = first_id;
+              next_id = _.max([ _.first(favicons).id, _.last(favicons).id ]);
+              last_checked_id = latest_id;
             }
             resolve(favicons);
           },
