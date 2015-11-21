@@ -1,4 +1,3 @@
-require 'favicon/accessor'
 require 'favicon/data'
 require 'favicon/errors'
 require 'favicon/fetcher'
