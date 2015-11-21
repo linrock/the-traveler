@@ -29,6 +29,8 @@ Components.RealTimeUpdater = function() {
         var sections = url.split(".");
         if (sections.length == 3) {
           return sections.slice(1).join(".");
+        } else if (sections.length == 4) {
+          return sections.slice(2).join(".");
         }
       });
       var domains = _.select(domains);

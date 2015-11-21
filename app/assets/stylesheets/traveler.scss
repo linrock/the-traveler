@@ -242,10 +242,12 @@ background: white;
     line-height: 26px;
     -webkit-font-smoothing: antialiased;
     margin-top: 40px;
-    transition: opacity 1.2s ease 3s;
+    transition: opacity 2s ease 3s, transform 1s ease 3s;
+    transform: translate3d(0,0,0);
 
     &.invisible {
       opacity: 0;
+      transform: translate3d(-15px,0,0);
     }
 
   }
@@ -261,7 +263,8 @@ background: white;
   }
 
   .description {
-    width: auto;
+    padding-left: 40px;
+    width: 185px;
   }
 
 }
@@ -275,8 +278,8 @@ background: white;
   }
 
   .description {
-    padding-left: 35px;
-    width: auto;
+    padding-left: 40px;
+    width: 185px;
   }
 
 }
