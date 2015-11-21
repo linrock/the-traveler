@@ -3,6 +3,9 @@ Components.RealTimeUpdater = function() {
   const N_COLS = 5;
 
 
+  var events = _.clone(Backbone.Events);
+
+
   // Favicon queue
   //
   var favicon_queue = [];
@@ -13,6 +16,56 @@ Components.RealTimeUpdater = function() {
     console.log("Adding " + favicons.length + " favicons to queue (" + n + " total)");
   };
 
+
+  // Neighborhoods
+  //
+  var NeighborhoodWatch = function() {
+
+    events.on("neighborhood:check", function() {
+      var urls = _.map($(".favicon-row .favicon"), function(f) {
+        return $(f).attr("title");
+      });
+      var domains = _.map(urls, function(url) {
+        var sections = url.split(".");
+        if (sections.length == 3) {
+          return sections.slice(1).join(".");
+        }
+      });
+      var domains = _.select(domains);
+      var counts = {};
+      for (var i = domains.length-1; i > 0; i--) {
+        var domain = domains[i];
+        counts[domain] = counts[domain] || 0;
+        counts[domain]++;
+      }
+      var max = 0;
+      var popular = false;
+      _.forEach(counts, function(count, domain) {
+        if (count > max) {
+          popular = domain;
+          max = count;
+        }
+      });
+      console.dir(counts);
+      console.log(popular + " " + max);
+      if (max > 30) {
+        events.trigger("neighborhood:visiting", popular);
+      } else {
+        events.trigger("neighborhood:visiting", false);
+      }
+    });
+
+    events.on("neighborhood:visiting", function(domain) {
+      if (domain) {
+        $(".neighborhood").text("Now passing through " + domain).removeClass("invisible");
+      } else {
+        $(".neighborhood").addClass("invisible");
+      }
+    });
+
+  };
+
+  new NeighborhoodWatch();
 
   // Fetch favicons periodically, manage traveler status
   //
@@ -55,6 +108,7 @@ Components.RealTimeUpdater = function() {
               next_id = _.max([ _.first(favicons).id, _.last(favicons).id ]);
               last_checked_id = latest_id;
             }
+            events.trigger("neighborhood:check");
             resolve(favicons);
           },
           error: function(xhr, status, error) {

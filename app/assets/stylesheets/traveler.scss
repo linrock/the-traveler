@@ -236,27 +236,16 @@ background: white;
     line-height: 34px;
   }
 
-  // status text (consider deprecating)
-  .status {
-    opacity: 0.6;
+  .neighborhood {
+    color: #828CFF;
+    font-size: 16px;
+    line-height: 26px;
+    -webkit-font-smoothing: antialiased;
     margin-top: 40px;
-  }
+    transition: opacity 1.2s ease 3s;
 
-  // Not yet implemented
-  .neighborhoods {
-    margin-top: 60px;
-    // -webkit-font-smoothing: antialiased;
-
-    h3 {
-      color: rgba(0,0,0,0.7);
-      font-size: 15px;
-      margin-bottom: 20px;
-    }
-
-    .neighborhood {
-      color: rgba(0,0,0,0.8);
-      font-size: 18px;
-      -webkit-font-smoothing: antialiased;
+    &.invisible {
+      opacity: 0;
     }
 
   }
