@@ -71,8 +71,10 @@ module Favicon
       @source_data.nil? || @source_data.length <= 1
     end
 
+    # TODO white-list valid mime-types instead?
+    #
     def invalid_mime_type?
-      mime_type =~ /(text|html|xml|x-empty|octet-stream|ERROR)/
+      mime_type =~ /(text|html|xml|x-empty|octet-stream|ERROR|zip)/
     end
 
     def transparent?
