@@ -72,7 +72,7 @@ module Favicon
     end
 
     def invalid_mime_type?
-      mime_type =~ /(text|html|xml|x-empty|octet-stream)/
+      mime_type =~ /(text|html|xml|x-empty|octet-stream|ERROR)/
     end
 
     def transparent?
