@@ -10,7 +10,9 @@ window.Traveler = {};
 
 $(function() {
 
-  Components.RealTimeUpdater();
-  // Components.InfiniteScroller();
+  setTimeout(function() {
+    Components.RealTimeUpdater();
+    // Components.InfiniteScroller();
+  }, 500);
 
 });

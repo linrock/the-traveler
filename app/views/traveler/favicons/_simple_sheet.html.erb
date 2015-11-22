@@ -1,0 +1,18 @@
+<% @favicon_snapshots.each_slice(5).to_a.each do |row| %>
+
+  <div class="favicon-row">
+
+    <% row.each do |snapshot| %>
+      <img class="favicon"
+           src="<%= snapshot.favicon_data_uri %>"
+           title="<%= snapshot.query_url %>">
+    <% end %>
+
+  </div>
+
+<% end %>
+
+<script>
+  Traveler.i = 0;
+  Traveler.direction = 0;
+</script>

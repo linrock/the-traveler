@@ -6,45 +6,27 @@
   <div class="the-trail">
 
     <img src="<%= asset_path "the-traveler.gif" %>"
-         class="the-traveler">
+         class="the-traveler invisible">
 
     <div class="favicons">
 
       <div class="favicon-sheet">
-
-        <% @favicon_snapshots.each_slice(5).to_a.each do |row| %>
-
-          <div class="favicon-row">
-
-            <% row.each do |snapshot| %>
-              <img class="favicon"
-                   src="<%= snapshot.favicon_data_uri %>"
-                   title="<%= snapshot.query_url %>">
-            <% end %>
-
-          </div>
-
-        <% end %>
-
+        <%= render :partial => "traveler/favicons/staggered_sheet" %>
       </div>
 
       <div class="favicon-fader">
-
         <div class="favicon-fade entrance"></div>
         <div class="favicon-fade block"></div>
         <div class="favicon-fade rect left bottom"></div>
         <div class="favicon-fade rect right bottom"></div>
-
       </div>
 
       <div class="favicon-trail">
-
         <div class="favicon favicon-ghost"></div>
         <div class="favicon favicon-ghost lighter"></div>
         <div class="favicon favicon-ghost lighter"></div>
         <div class="favicon favicon-ghost lighter"></div>
         <div class="favicon favicon-ghost lighter"></div>
-
       </div>
 
     </div>
@@ -65,10 +47,6 @@
       of the road it takes
     </div>
 
-    <div class="status" style="display: none;">
-      Status &ndash; <span class="s"><%= @traveler.status %></span>
-    </div>
-
     <div class="neighborhood invisible"></div>
 
   </div>
@@ -78,6 +56,4 @@
 <script>
   Traveler.latest_id  = <%= @ids.max %>;
   Traveler.max_rows = <%= FaviconSnapshot::N_PER_PAGE / 5 %>;
-  Traveler.i = 0;
-  Traveler.direction = 0;
 </script>

@@ -59,7 +59,7 @@ Components.RealTimeUpdater = function() {
 
     events.on("neighborhood:visiting", function(domain) {
       if (domain) {
-        $(".neighborhood").text("Now passing through " + domain).removeClass("invisible");
+        $(".neighborhood").text("Passing through " + domain).removeClass("invisible");
       } else {
         $(".neighborhood").addClass("invisible");
       }
@@ -254,8 +254,15 @@ Components.RealTimeUpdater = function() {
         .then(delayedRun)
     };
 
+    var initAndRun = function() {
+      $traveler
+        .removeClass("invisible")
+        .css({ "transform" : "translate3d(" + Traveler.i * 30 + "px,0,0)" });
+      run();
+    };
+
     return {
-      run: run
+      run: initAndRun
     };
 
   };

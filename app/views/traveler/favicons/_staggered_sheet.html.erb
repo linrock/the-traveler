@@ -1,0 +1,58 @@
+<%
+
+last_digit = @ids.max.to_s[-1].to_i
+polarity = ["left", "right"].cycle
+
+if (1..5).include? last_digit
+  t_pos = last_digit - 1
+  t_dir = 1
+  f_row = last_digit - 1
+  first_row = @favicon_snapshots[0..f_row].reverse
+else
+  t_pos = (10 - last_digit) % 10
+  t_dir = -1
+  f_row = (last_digit + 4) % 10
+  first_row = @favicon_snapshots[0..f_row].reverse
+  polarity.next
+end
+
+if [0,5].include?(last_digit)
+  t_dir = 0
+end
+
+rows = @favicon_snapshots[f_row+1..-1].each_slice(5).to_a
+if ![0,5].include?(last_digit)
+  rows = rows[0..-2]
+end
+
+%>
+
+<div class="favicon-row <%= polarity.next %>">
+
+  <% first_row.each do |snapshot| %>
+    <img class="favicon"
+         src="<%= snapshot.favicon_data_uri %>"
+         title="<%= snapshot.query_url %>">
+  <% end %>
+
+</div>
+
+
+<% rows.each do |row| %>
+
+  <div class="favicon-row <%= polarity.next %>">
+
+    <% row.reverse.each do |snapshot| %>
+      <img class="favicon"
+           src="<%= snapshot.favicon_data_uri %>"
+           title="<%= snapshot.query_url %>">
+    <% end %>
+
+  </div>
+
+<% end %>
+
+<script>
+  Traveler.i = <%= t_pos %>
+  Traveler.direction = <%= t_dir %>
+</script>
