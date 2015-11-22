@@ -35,9 +35,9 @@ module Favicon
       get_mime_type(@source_data)
     end
 
-    def identify
+    def identify(verbose = false)
       with_temp_data_file(@source_data) do |t|
-        imagemagick_run("identify #{t.path.to_s}")
+        imagemagick_run("identify #{"-verbose" if verbose} #{t.path.to_s}")
       end
     end
 

@@ -90,4 +90,5 @@ Known issues:
 
 * Invalid image data
   * http://www.area17.com/ - imagemagick fails to parse this, but Chrome displays the favicon correctly
+  * http://www.dsa.org - imagemagick says no images defined, but Chrome displays it correctly
 
