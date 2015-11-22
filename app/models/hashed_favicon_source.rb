@@ -7,6 +7,8 @@ class HashedFaviconSource < ActiveRecord::Base
   validates_format_of :md5_hash, :with => /[\da-f]{32}/
   validate :validate_source_data
 
+  MAX_FILE_SIZE = 1024 * 1024
+
 
   def self.find_by_source_data(data)
     find_by_md5_hash Digest::MD5.hexdigest(data)
@@ -27,7 +29,12 @@ class HashedFaviconSource < ActiveRecord::Base
   end
 
   def validate_source_data
-    Favicon::Data.new(source_data).valid?
+    unless Favicon::Data.new(source_data).valid?
+      errors.add :source_data, "is invalid"
+    end
+    unless size <= MAX_FILE_SIZE
+      errors.add :source_data, "is too big"
+    end
   end
 
 end

@@ -74,7 +74,7 @@ module Favicon
     # TODO white-list valid mime-types instead?
     #
     def invalid_mime_type?
-      mime_type =~ /(text|html|xml|x-empty|octet-stream|ERROR|zip)/
+      mime_type =~ /(text|html|xml|x-empty|octet-stream|ERROR|zip|jar)/
     end
 
     def transparent?
