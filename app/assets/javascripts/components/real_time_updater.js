@@ -67,7 +67,6 @@ Components.RealTimeUpdater = function() {
 
   };
 
-  new NeighborhoodWatch();
 
   // Fetch favicons periodically, manage traveler status
   //
@@ -266,5 +265,6 @@ Components.RealTimeUpdater = function() {
   //
   FaviconContentUpdater().run();
   FaviconSheetAnimator().run();
+  NeighborhoodWatch();
 
 };
