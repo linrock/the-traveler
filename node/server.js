@@ -5,9 +5,7 @@ var accessor = require('./accessor.js');
 var processor = require('./processor.js');
 
 
-var requestHandler = function(request, response) {
-  var params = url.parse(request.url, true).query;
-  var query = params.q;
+var writeFaviconResponse = function(query) {
 
   if (!query) {
     response.writeHead(404);
@@ -50,6 +48,12 @@ var requestHandler = function(request, response) {
       console.log(error);
     });
 
+};
+
+var requestHandler = function(request, response) {
+  var params = url.parse(request.url, true).query;
+  var query = params.q;
+  writeFaviconResponse(query);
 };
 
 
