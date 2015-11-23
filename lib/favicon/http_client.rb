@@ -14,7 +14,7 @@ module Favicon
     def get(url)
       stdin, stdout, stderr, t = Open3.popen3(curl_cmd(url))
       output = encode_utf8(stdout.read).strip
-      if (err = stderr.read.strip).present?
+      if (err = encode_utf8(stderr.read).strip).present?
         if err.include? "SSL"
           raise Favicon::Curl::SSLError.new(err)
         elsif err.include? "Couldn't resolve host"

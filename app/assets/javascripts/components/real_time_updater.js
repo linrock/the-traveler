@@ -17,7 +17,7 @@ Components.RealTimeUpdater = function() {
   };
 
 
-  // Neighborhoods
+  // Neighborhoods - watch for popular domains + subdomains
   //
   var NeighborhoodWatch = function() {
 
