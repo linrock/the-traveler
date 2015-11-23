@@ -8,12 +8,38 @@ Components.RealTimeUpdater = function() {
 
   // Favicon queue
   //
-  var favicon_queue = [];
+  var FaviconQueue = function() {
 
-  var enqueueRecentFavicons = function(favicons) {
-    favicon_queue = favicon_queue.concat(favicons);
-    var n = favicon_queue.length;
-    console.log("Adding " + favicons.length + " favicons to queue (" + n + " total)");
+    var queue = [];
+
+    var size = function() {
+      return queue.length;
+    };
+
+    return {
+
+      next: function() {
+        return queue.shift();
+      },
+
+      size: size,
+
+      enqueue: function(favicons) {
+        queue = queue.concat(favicons);
+        console.log("Adding " + favicons.length + " favicons to queue (" + size() + " total)");
+        return queue;
+      },
+
+      isFull: function() {
+        return size() > 50;
+      },
+
+      isEmpty: function() {
+        return size() == 0;
+      }
+
+    };
+
   };
 
 
@@ -79,8 +105,8 @@ Components.RealTimeUpdater = function() {
       return new RSVP.Promise(function(resolve, reject) {
         if (next_id == last_checked_id) {
           reject("Already checked " + next_id);
-        } else if (favicon_queue.length > 50) {
-          reject("Queue is pretty full - " + favicon_queue.length);
+        } else if (favicon_queue.isFull()) {
+          reject("Queue is pretty full - " + favicon_queue.size());
         } else {
           resolve(latest_id);
         }
@@ -122,7 +148,7 @@ Components.RealTimeUpdater = function() {
     var pollForFavicons = function() {
       startFetcher(next_id)
         .then(fetchRecentFavicons)
-        .then(enqueueRecentFavicons)
+        .then(favicon_queue.enqueue)
         .catch(function(error) {
           console.log("Favicon polling error: " + error);
           return true;
@@ -157,7 +183,7 @@ Components.RealTimeUpdater = function() {
 
     var checkFaviconQueue = function() {
       return new RSVP.Promise(function(resolve, reject) {
-        if (favicon_queue.length > 0) {
+        if (!favicon_queue.isEmpty()) {
           resolve();
         } else {
           reject({ error: "No favicon in queue" });
@@ -226,7 +252,7 @@ Components.RealTimeUpdater = function() {
     };
 
     var showFavicon = function() {
-      var $favicon = $(faviconTemplate({ favicon: favicon_queue.shift() }));
+      var $favicon = $(faviconTemplate({ favicon: favicon_queue.next() }));
       return new RSVP.Promise(function(resolve, reject) {
         $favicon.appendTo($sheet.find(".favicon-row").first());
         setTimeout(function() {
@@ -270,6 +296,7 @@ Components.RealTimeUpdater = function() {
 
   // init
   //
+  var favicon_queue = FaviconQueue();
   FaviconContentUpdater().run();
   FaviconSheetAnimator().run();
   NeighborhoodWatch();
