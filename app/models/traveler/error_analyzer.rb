@@ -20,7 +20,7 @@ class ErrorAnalyzer
   end
 
   def source_data
-    Base64.decode64 @error[:base64_favicon_data]
+    Base64.decode64(@error[:base64_favicon_data]) rescue nil
   end
 
   def data

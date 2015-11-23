@@ -208,7 +208,6 @@ Components.RealTimeUpdater = function() {
     };
 
     var animateSheet = function() {
-      // console.log("Animating sheet");
 
       var $createRow = function() {
         if (direction == 1) {
@@ -219,26 +218,38 @@ Components.RealTimeUpdater = function() {
         return $('<div>').addClass("favicon-row " + polarity);
       };
 
-      return new RSVP.Promise(function(resolve, reject) {
+      var $initIllusion = function($sheet) {
         var $illusion = $sheet.clone().addClass("illusion");
-        $sheet.prepend($createRow());
-        var $rows = $sheet.find(".favicon-row");
-        var maxRowsReached = $rows.length > Traveler.max_rows;
-        if (maxRowsReached) {
-          $rows.last().remove();
-        }
-        $illusion.appendTo($(".favicons"));
-        setTimeout(function() {
-          $illusion.addClass("anim");
-          if (maxRowsReached) {
-            $illusion.find(".favicon-row").last().addClass("invisible");
-          }
+        return new RSVP.Promise(function(resolve, reject) {
           setTimeout(function() {
-            $illusion.remove();
-            resolve();
-          }, 250);
-        }, 10);
-      });
+            resolve($illusion);
+          }, 5);
+        });
+      };
+
+      var animateIllusion = function($illusion) {
+        return new RSVP.Promise(function(resolve, reject) {
+          $sheet.prepend($createRow());
+          var $rows = $sheet.find(".favicon-row");
+          var maxRowsReached = $rows.length > Traveler.max_rows;
+          if (maxRowsReached) {
+            $rows.last().remove();
+          }
+          $illusion.appendTo($(".favicons"));
+          setTimeout(function() {
+            $illusion.addClass("anim");
+            if (maxRowsReached) {
+              $illusion.find(".favicon-row").last().addClass("invisible");
+            }
+            setTimeout(function() {
+              $illusion.remove();
+              resolve();
+            }, 250);
+          }, 10);
+        });
+      };
+
+      return $initIllusion($sheet).then(animateIllusion);
     };
 
     var animateTraveler = function() {
@@ -265,7 +276,7 @@ Components.RealTimeUpdater = function() {
     };
 
     var delayedRun = function() {
-    // TODO lower delay for larger queue sizes
+      // TODO lower delay for larger queue sizes
       var delay = ~~ (400 + Math.random() * 500);
       setTimeout(run, delay);
     };

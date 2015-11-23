@@ -18,5 +18,6 @@
 
 /app/assets/images/favicons.png
 /node/data/cache
+/public/assets
 
 node_modules

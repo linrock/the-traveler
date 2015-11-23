@@ -116,7 +116,7 @@ module Favicon
 
     # number of bytes in the raw data
     def size
-      @source_data.size
+      @source_data && @source_data.size || 0
     end
 
     def info_str
