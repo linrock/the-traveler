@@ -7,9 +7,10 @@ class Traveler
   attr_accessor :directions
   attr_reader :logger
 
-  def initialize
+  def initialize(start_url = nil)
     @directions = nil
     @logger = ColorizedLogger.new("log/traveler.log")
+    visit_url(start_url) if start_url.present?
   end
 
   def status
