@@ -295,7 +295,10 @@ Components.RealTimeUpdater = function() {
       $traveler
         .removeClass("invisible")
         .css({ "transform" : "translate3d(" + Traveler.i * 30 + "px,0,0)" });
-      run();
+      $sheet.removeClass("invisible");
+      setTimeout(function() {
+        run();
+      }, 500);
     };
 
     return {

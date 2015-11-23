@@ -55,11 +55,18 @@ background: white;
 
 .favicons {
   position: relative;
+  z-index: 1;
 }
 
 .favicon-sheet {
   height: $n-per-page / $n-cols * $f-space;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  transform: translate3d(0,0,0);
+
+  &.invisible {
+    opacity: 0;
+    transform: translate3d(0,-8px,0);
+  }
 
   &.illusion {
     background: white;
@@ -247,12 +254,12 @@ background: white;
     line-height: 26px;
     -webkit-font-smoothing: antialiased;
     margin-top: 40px;
-    transition: opacity 2s ease 3s, transform 1s ease 3s;
+    transition: opacity 0.75s ease 1.5s, transform 0.75s ease 1.5s;
     transform: translate3d(0,0,0);
 
     &.invisible {
       opacity: 0;
-      transform: translate3d(-15px,0,0);
+      transform: translate3d(-10px,0,0);
     }
 
   }
