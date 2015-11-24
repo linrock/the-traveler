@@ -7,9 +7,9 @@ $f-size: 16px;
 $f-margin: 14px;
 $f-space: $f-size + $f-margin;
 
-$container-width: 640px;
-$left-width: $n-cols * $f-space;
-$right-width: $container-width - $left-width;
+$container-width: 400px;
+$trail-width: $n-cols * $f-space;
+$description-width: 160px;
 
 
 @mixin clearfix {
@@ -27,14 +27,20 @@ background: white;
   background: none;
   margin: 75px auto;
   width: $container-width;
-  padding: 0;
+  padding: 0 (35px - $f-margin) 0 35px;
   @include clearfix();
 }
 
 .the-trail {
-  float: left;
-  width: $left-width;
+  float: right;
+  width: $trail-width;
   @include clearfix();
+}
+
+.description {
+  float: left;
+  margin-top: 45px;
+  width: $description-width;
 }
 
 .the-traveler {
@@ -210,8 +216,6 @@ background: white;
 .description {
   float: left;
   margin-top: 45px;
-  padding-left: 60px;
-  width: $right-width;
   color: #111;
 
   .title {
@@ -222,11 +226,11 @@ background: white;
   .status-icon {
     display: inline-block;
     border-radius: 99px;
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
     position: relative;
-    top: -2px;
-    left: 12px;
+    top: -3px;
+    left: 7px;
 
     &.active {
       background: #00DC00;
@@ -250,7 +254,7 @@ background: white;
 
   .neighborhood {
     color: #828CFF;
-    font-size: 16px;
+    font-size: 15px;
     line-height: 26px;
     -webkit-font-smoothing: antialiased;
     margin-top: 40px;
@@ -259,39 +263,17 @@ background: white;
 
     &.invisible {
       opacity: 0;
-      transform: translate3d(-10px,0,0);
+      transform: translate3d(10px,0,0);
     }
 
   }
 
 }
 
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 460px) {
 
   .container {
-    width: 410px;
-    padding: 0 25px;
-    margin: 50px auto;
-  }
-
-  .description {
-    padding-left: 40px;
-    width: 185px;
-  }
-
-}
-
-@media screen and (max-width: 640px) {
-
-  .container {
-    width: 385px;
-    padding: 0 25px;
-    margin: 50px auto;
-  }
-
-  .description {
-    padding-left: 40px;
-    width: 185px;
+    margin-top: 40px;
   }
 
 }
