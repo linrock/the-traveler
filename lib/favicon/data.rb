@@ -13,6 +13,8 @@ module Favicon
     #
     STDEV_THRESHOLD = 0.005
 
+    MAX_FILE_SIZE = 1024 * 1024
+
     attr_accessor :source_data, :png_data, :error
 
     def initialize(source_data)
@@ -48,6 +50,10 @@ module Favicon
         @error = "source_data is blank"
         return false
       end
+      if size_too_big?
+        @error = "source_data file size too big"
+        return false
+      end
       if invalid_mime_type?
         @error = "source_data mime-type is invalid - #{mime_type}"
         return false
@@ -69,6 +75,10 @@ module Favicon
 
     def blank?
       @source_data.nil? || @source_data.length <= 1
+    end
+
+    def size_too_big?
+      size >= MAX_FILE_SIZE
     end
 
     # TODO white-list valid mime-types instead?

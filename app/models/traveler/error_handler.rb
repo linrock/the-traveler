@@ -33,6 +33,8 @@ class Traveler::ErrorHandler
     Favicon::Curl::DNSError
   ]
 
+  attr_reader :error, :class, :message
+
   def initialize(error)
     @error = error
     @class = error.class
@@ -58,7 +60,7 @@ class Traveler::ErrorHandler
   end
 
   def export_as_fixture!
-    return unless @error.meta.present?
+    return unless @error.respond_to? :meta
     host = URI(@error.meta[:query_url]).host
     file_path = Rails.root.join("test/fixtures/#{host}.json")
     open(file_path, "w+") do |f|
