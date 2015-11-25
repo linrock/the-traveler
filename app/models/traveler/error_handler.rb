@@ -58,6 +58,7 @@ class Traveler::ErrorHandler
   end
 
   def export_as_fixture!
+    return unless @error.meta.present?
     host = URI(@error.meta[:query_url]).host
     file_path = Rails.root.join("test/fixtures/#{host}.json")
     open(file_path, "w+") do |f|
