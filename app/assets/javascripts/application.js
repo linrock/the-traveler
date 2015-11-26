@@ -13,6 +13,6 @@ $(function() {
   setTimeout(function() {
     Components.RealTimeUpdater();
     // Components.InfiniteScroller();
-  }, 500);
+  }, 1000);
 
 });

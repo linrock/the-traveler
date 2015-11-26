@@ -66,12 +66,13 @@ background: white;
 
 .favicon-sheet {
   height: $n-per-page / $n-cols * $f-space;
-  transition: opacity 0.5s ease, transform 0.5s ease;
-  transform: translate3d(0,0,0);
+  transition: opacity 1.0s ease, transform 0.75s ease;
+  transform: translate3d(0,0,0) scale3d(1,1,1);
+  -webkit-backface-visibility: hidden;
 
   &.invisible {
     opacity: 0;
-    transform: translate3d(0,-8px,0);
+    transform: translate3d(0,-40px,0) scale3d(0.8,0.8,1);
   }
 
   &.illusion {

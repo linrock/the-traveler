@@ -298,7 +298,7 @@ Components.RealTimeUpdater = function() {
       $sheet.removeClass("invisible");
       setTimeout(function() {
         run();
-      }, 500);
+      }, 1000);
     };
 
     return {
