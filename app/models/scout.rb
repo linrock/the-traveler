@@ -17,6 +17,10 @@ class Scout
 
   def process_domain(domain)
     @logger.log "Visiting - #{domain.url}"
+    unless domain.valid?
+      @logger.log "Invalid URL: #{domain.url}", :color => :yellow
+      return
+    end
     html = domain.visit!
     if !domain.accessed?
       @logger.log "Failed: #{domain.error_message}", :color => :yellow

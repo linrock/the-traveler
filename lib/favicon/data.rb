@@ -46,31 +46,21 @@ module Favicon
     # Does the data look like a valid favicon?
     #
     def valid?
-      if blank?
-        @error = "source_data is blank"
-        return false
-      end
-      if size_too_big?
-        @error = "source_data file size too big"
-        return false
-      end
-      if invalid_mime_type?
-        @error = "source_data mime-type is invalid - #{mime_type}"
-        return false
-      end
-      if transparent?
-        @error = "source_data is a transparent image"
-        return false
-      end
-      if one_pixel?
-        @error = "source_data is a 1x1 image"
-        return false
-      end
-      if one_color?
-        @error = "png_data is one color (or close to it)"
-        return false
-      end
-      true
+      @error =
+        if blank?
+          "source_data is blank"
+        elsif size_too_big?
+          "source_data file size too big"
+        elsif invalid_mime_type?
+          "source_data mime-type is invalid - #{mime_type}"
+        elsif transparent?
+          "source_data is a transparent image"
+        elsif one_pixel?
+          "source_data is a 1x1 image"
+        elsif one_color?
+          "png_data is one color (or close to it)"
+        end
+      @error.nil?
     end
 
     def blank?
@@ -162,7 +152,7 @@ module Favicon
     end
 
     def inspect
-      "#<Favicon::Data @size=#{@source_data.nil? ? nil : @source_data.size}>"
+      "#<Favicon::Data @size=#{size}>"
     end
 
   end
