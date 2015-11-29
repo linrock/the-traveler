@@ -13,9 +13,9 @@ class Domain < ActiveRecord::Base
   def visit!
     html_response = nil
     begin
-      html_response = Favicon::HTTPClient.get(self.url)
+      html_response = FaviconParty::HTTPClient.get(self.url)
       self.error_message = nil
-    rescue Favicon::CurlError => error
+    rescue FaviconParty::CurlError => error
       self.error_message = error.message
     end
     self.visited = true

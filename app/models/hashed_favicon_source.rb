@@ -29,7 +29,7 @@ class HashedFaviconSource < ActiveRecord::Base
   end
 
   def validate_source_data
-    unless Favicon::Data.new(source_data).valid?
+    unless FaviconParty::Image.new(source_data).valid?
       errors.add :source_data, "is invalid"
     end
     unless size <= MAX_FILE_SIZE

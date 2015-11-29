@@ -27,7 +27,7 @@ class HashedFaviconPng < ActiveRecord::Base
   end
 
   def validate_png_data
-    mime_type = Favicon::Utils.get_mime_type(png_data)
+    mime_type = FaviconParty::Utils.get_mime_type(png_data)
     if mime_type != "image/png"
       errors.add :png_data, "mime type is invalid - #{mime_type}"
     end

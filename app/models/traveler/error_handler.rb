@@ -1,20 +1,20 @@
 class Traveler::ErrorHandler
 
   IGNORED_ERRORS = [
-    Favicon::NotFound,
-    Favicon::CurlError,
-    Favicon::Curl::DNSError
+    FaviconParty::FaviconNotFound,
+    FaviconParty::CurlError,
+    FaviconParty::Curl::DNSError
   ]
 
   IGNORED_ERROR_STRINGS = {
 
-    Favicon::Curl::SSLError   => [
+    FaviconParty::Curl::SSLError   => [
       "alert handshake failure",
       "unable to get local issuer certificate",
       "SSL read: error:00000000"
     ],
 
-    Favicon::ImageMagickError => [
+    FaviconParty::ImageMagickError => [
       "`XWD'",                           # TODO ignoring XWD file formats
       "identify: improper image header", # TODO
       'delegate failed `"dwebp"',        # TODO
@@ -28,9 +28,9 @@ class Traveler::ErrorHandler
   }
 
   IGNORED_BACKTRACES = [
-    Favicon::NotFound,
-    Favicon::CurlError,
-    Favicon::Curl::DNSError
+    FaviconParty::FaviconNotFound,
+    FaviconParty::CurlError,
+    FaviconParty::Curl::DNSError
   ]
 
   attr_reader :error, :class, :message
@@ -49,7 +49,7 @@ class Traveler::ErrorHandler
   # skipped upon laptop wakeup
   #
   def should_delay?
-    @class == Favicon::Curl::DNSError
+    @class == FaviconParty::Curl::DNSError
   end
 
   def should_ignore?

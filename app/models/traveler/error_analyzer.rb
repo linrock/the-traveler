@@ -24,7 +24,7 @@ class ErrorAnalyzer
   end
 
   def data
-    Favicon::Data.new(source_data)
+    FaviconParty::Image.new(source_data)
   end
 
   def mime_type

@@ -1,5 +1,5 @@
 class FaviconSnapshot < ActiveRecord::Base
-  extend Favicon::Utils
+  extend FaviconParty::Utils
 
   validates_format_of :query_url, :with => /\Ahttps?:\/\//
   validates_format_of :final_url, :with => /\Ahttps?:\/\//
@@ -69,7 +69,7 @@ class FaviconSnapshot < ActiveRecord::Base
 
   def fetcher
     return @fetcher if defined?(@fetcher)
-    @fetcher = Favicon::Fetcher.new(self.query_url)
+    @fetcher = FaviconParty::Fetcher.new(self.query_url)
   end
 
   def fetch
@@ -77,7 +77,7 @@ class FaviconSnapshot < ActiveRecord::Base
   end
 
   def data
-    Favicon::Data.new(source_data)
+    FaviconParty::Image.new(source_data)
   end
 
   def source_data
