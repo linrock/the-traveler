@@ -16,6 +16,7 @@ gem 'beaneater'
 
 # gem 'react-rails'
 gem 'ruby-filemagic'
+gem 'favicon_party'
 
 gem 'pry'
 
