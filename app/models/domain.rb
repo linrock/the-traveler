@@ -36,7 +36,7 @@ class Domain < ActiveRecord::Base
     if self.url !~ /\Ahttps?:\/\//
       self.url = "http://#{self.url}"
     end
-    self.url = URI.encode(URI.parse(url).hostname.downcase.strip)
+    self.url = URI.encode(URI.parse(url).hostname.downcase.strip) rescue nil
   end
 
   def validate_url
