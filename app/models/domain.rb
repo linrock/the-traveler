@@ -1,6 +1,5 @@
 class Domain < ActiveRecord::Base
   validates_format_of :url, :with => /\A[\w\-]+(\.[\w\-]+)*(\.[a-z]{2,})\z/
-  validate :validate_url
 
   after_initialize :normalize_url
 
@@ -13,7 +12,8 @@ class Domain < ActiveRecord::Base
   def visit!
     html_response = nil
     begin
-      html_response = FaviconParty::HTTPClient.get(self.url)
+      prefixed_url = FaviconParty::Utils.prefix_url(self.url)
+      html_response = FaviconParty::HTTPClient.get(prefixed_url)
       self.error_message = nil
     rescue FaviconParty::CurlError => error
       self.error_message = error.message
@@ -37,12 +37,6 @@ class Domain < ActiveRecord::Base
       self.url = "http://#{self.url}"
     end
     self.url = URI.encode(URI.parse(url).hostname.downcase.strip) rescue nil
-  end
-
-  def validate_url
-    if self.url[0] == "-"
-      errors.add :url, "can't start with a hyphen"
-    end
   end
 
 end

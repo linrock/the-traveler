@@ -60,7 +60,7 @@ class Scout
     links = doc.css("a").map {|a| a.attr("href") }.
                 select {|href| (href =~ /\Ahttps?:\/\//) rescue nil }.
                 map    {|href| URI.parse(href).hostname.downcase.strip rescue nil }.
-                select {|href| href && href[0] != '-' }.uniq
+                uniq
   end
 
   def nameservers_reachable?
