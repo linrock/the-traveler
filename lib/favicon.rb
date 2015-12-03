@@ -1,5 +1,0 @@
-require 'favicon/data'
-require 'favicon/errors'
-require 'favicon/fetcher'
-require 'favicon/http_client'
-require 'favicon/utils'

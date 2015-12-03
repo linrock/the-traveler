@@ -22,7 +22,6 @@ module Ffetcher
     # config.i18n.default_locale = :de
 
     config.to_prepare do
-      require_dependency Rails.root.join("lib/favicon.rb")
       Dir[ File.expand_path(Rails.root.join("app/models/*/*.rb")) ].each do |file|
         require_dependency file
       end
