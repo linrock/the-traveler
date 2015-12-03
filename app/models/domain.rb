@@ -1,7 +1,7 @@
 class Domain < ActiveRecord::Base
   validates_format_of :url, :with => /\A[\w\-]+(\.[\w\-]+)*(\.[a-z]{2,})\z/
 
-  after_initialize :normalize_url
+  after_initialize :deprefix_url
 
   def self.uncharted(n = nil)
     domains = where(:visited => false).order('id ASC')
@@ -31,7 +31,7 @@ class Domain < ActiveRecord::Base
     end
   end
 
-  def normalize_url
+  def deprefix_url
     if self.url !~ /\Ahttps?:\/\//
       self.url = "http://#{self.url}"
     end
