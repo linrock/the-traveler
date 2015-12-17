@@ -16,7 +16,7 @@ gem 'beaneater'
 
 # gem 'react-rails'
 gem 'ruby-filemagic'
-gem 'favicon_party'
+gem 'favicon_party', :github => 'linrock/favicon_party'
 
 gem 'pry'
 
